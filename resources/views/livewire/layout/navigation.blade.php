@@ -35,6 +35,12 @@ new class extends Component
                     </x-nav-link>
                 </div>
 
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('offers')" :active="request()->routeIs('offers')" wire:navigate>
+                        {{ __('Offers') }}
+                    </x-nav-link>
+                </div>
+
                 @auth
                     @if(auth()->user()->isAdmin())
                         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">

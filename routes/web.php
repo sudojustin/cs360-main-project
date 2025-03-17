@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\OfferController;
 
 /*Route::view('/', 'welcome');*/
 
@@ -12,6 +13,8 @@ Route::view('/', 'dashboard')
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::get('/offers', [OfferController::class, 'index'])->name('offers');
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'showAdminDashboard'])->name('admin');
