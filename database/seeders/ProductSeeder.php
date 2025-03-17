@@ -29,14 +29,14 @@ class ProductSeeder extends Seeder
 
         Product::create([
             'name' => 'Headphones',
-            'owner_id' => 1, // Assuming user ID 1 owns this product
+            'owner_id' => 1,
             'value' => 150.00,
             'quantity' => 10,
         ]);
 
         Product::create([
             'name' => 'Smartwatch',
-            'owner_id' => 2, // Assuming user ID 2 owns this product
+            'owner_id' => 2,
             'value' => 250.00,
             'quantity' => 3,
         ]);
