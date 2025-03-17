@@ -15,7 +15,7 @@ class DashboardController extends Controller
     public function index()
     {
         // Fetch all products from the database
-        $products = Product::all();
+        $products = Product::where('owner_id', auth()->user()->id)->get();
 
         // Pass the products to the view
         return view('dashboard', compact('products'));
