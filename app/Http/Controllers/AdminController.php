@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -11,7 +12,8 @@ class AdminController extends Controller
     {
         // Fetch all users
         $users = User::all();
+        $products = Product::all();
 
-        return view('admin-dashboard', compact('users'));
+        return view('admin-dashboard', compact('users', 'products'));
     }
 }
