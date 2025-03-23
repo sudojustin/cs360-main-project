@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id(); // Primary key
-            $table->string('name'); // Product name
             $table->unsignedBigInteger('owner_id'); // Foreign key for owner
+            $table->string('name'); // Product name
             $table->decimal('value', 10, 2); // Product value
             $table->integer('quantity')->default(1); // Quantity available
             $table->timestamps();
