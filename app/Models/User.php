@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'partner_id',
     ];
 
     /**
@@ -51,5 +52,25 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->is_admin ?? false;
+    }
+
+    public function partner()
+    {
+        return $this->belongsTo(User::class, 'partner_id');
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'owner_id');
+    }
+
+    public function transactionsAsInitiator()
+    {
+        return $this->hasMany(Transaction::class, 'initiator_id');
+    }
+
+    public function transactionsAsPartner()
+    {
+        return $this->hasMany(Transaction::class, 'partner_id');
     }
 }

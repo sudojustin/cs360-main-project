@@ -37,7 +37,7 @@ class Transaction extends Model
 
     public function counterparty()
     {
-        return $this->belongsTo(User::class, 'counterparty_id');
+        return $this->belongsTo(User::class, 'counterparty_id', 'id');
     }
 
     public function partnerInitiator()
@@ -50,13 +50,13 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'partner_counterparty_id');
     }
 
-    public function productP()
+    public function productp()
     {
-        return $this->belongsTo(Product::class, 'productp_id');
+        return $this->belongsTo(Product::class, 'productp_id', 'id');
     }
 
-    public function productE()
+    public function producte()
     {
-        return $this->belongsTo(Product::class, 'producte_id');
+        return $this->belongsTo(Product::class, 'producte_id', 'id');
     }
 }

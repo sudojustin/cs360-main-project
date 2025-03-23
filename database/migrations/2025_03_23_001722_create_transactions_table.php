@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('productp_id')->constrained('products')->onDelete('cascade'); // FK: Product P
             $table->foreignId('producte_id')->constrained('products')->onDelete('cascade'); // FK: Product E
             $table->string('hashkey', 16)->unique(); // Secure 16-digit key
-            $table->decimal('transaction_fee_total', 10, 2); // Total fee with precision
+            $table->decimal('transaction_fee_total', 10, 2)->default(0)->change; // Total fee with precision
             $table->timestamp('created_at')->useCurrent(); // Auto-set on creation
             $table->timestamp('completed_at')->nullable(); // Nullable completion time
             $table->enum('status', ['Pending', 'Verified', 'Completed'])->default('Pending'); // Transaction status

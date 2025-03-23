@@ -10,14 +10,24 @@ new class extends Component
 {
     public string $name = '';
     public string $email = '';
+    public ?int $partner_id = null; // Add partner_id to store the selected partner's id
 
     /**
      * Mount the component.
      */
     public function mount(): void
     {
+        $user = Auth::user();
+
+        if (!$user) {
+            abort(redirect()->route('login'));
+        }
+
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        
+        // Check if the partner exists before accessing partner_id
+        $this->partner_id = $user->partner ? $user->partner->id : null; // Use the partner's id if it exists, otherwise null
     }
 
     /**
@@ -30,6 +40,7 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'partner_id' => ['nullable', 'exists:users,id', 'different:' . Auth::id()],
         ]);
 
         $user->fill($validated);
@@ -38,6 +49,8 @@ new class extends Component
             $user->email_verified_at = null;
         }
 
+        // Save the user and partner relationship
+        $user->partner_id = $this->partner_id;
         $user->save();
 
         $this->dispatch('profile-updated', name: $user->name);
@@ -69,7 +82,7 @@ new class extends Component
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
+            {{ __("Update your account's profile information, email address, and partner.") }}
         </p>
     </header>
 
@@ -84,6 +97,18 @@ new class extends Component
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
+
+        <!-- Partner ID Field -->
+        <div>
+            <x-input-label for="partner_id" :value="__('Partner ID (Optional)')" />
+            <select wire:model="partner_id" id="partner_id" name="partner_id" class="mt-1 block w-full">
+                <option value="">Select a Partner</option>
+                @foreach(App\Models\User::where('id', '!=', auth()->id())->get() as $user)
+                    <option value="{{ $user->id }}" @selected($user->id == $partner_id)>{{ $user->name }}</option>
+                @endforeach
+            </select>
+            <x-input-error class="mt-2" :messages="$errors->get('partner_id')" />
+        </div>
 
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
                 <div>

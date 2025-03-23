@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,7 +14,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Clear the tables before seeding to avoid conflicts
+        DB::table('users')->truncate();
+        DB::table('products')->truncate();
+        DB::table('transactions')->truncate();
 
         User::factory()->create([
             'name' => 'test',
@@ -28,8 +32,33 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
         ]);
 
+        User::factory()->create([
+            'name' => 'user1',
+            'email' => 'user1@user1',
+            'password' => bcrypt('password'),
+        ]);
+
+        User::factory()->create([
+            'name' => 'user2',
+            'email' => 'user2@user2',
+            'password' => bcrypt('password'),
+        ]);
+
+        User::factory()->create([
+            'name' => 'user3',
+            'email' => 'user3@user3',
+            'password' => bcrypt('password'),
+        ]);
+
+        User::factory()->create([
+            'name' => 'user4',
+            'email' => 'user4@user4',
+            'password' => bcrypt('password'),
+        ]);
+
         $this->call([
             ProductSeeder::class,
+            TransactionSeeder::class,
         ]);
     }
 }
