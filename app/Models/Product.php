@@ -21,6 +21,11 @@ class Product extends Model
         'quantity',     // Quantity available for barter 
     ];
 
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'productp_id')->orWhere('producte_id', $this->id);
+    }
+
     // Relationship with User - a product belongs to a user
     public function owner()
     {
