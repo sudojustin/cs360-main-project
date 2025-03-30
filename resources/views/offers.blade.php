@@ -22,15 +22,17 @@
                         </div>
                     @endif
 
-                    <h3 class="font-semibold text-xl">Available Barter Offers</h3>
+                    <h3 class="font-semibold text-xl">Products Available for Trading</h3>
 
                     <table class="min-w-full table-auto mt-4 border-collapse">
                         <thead>
                             <tr class="bg-gray-100">
                                 <th class="px-4 py-2 border-b">Product</th>
+                                <th class="px-4 py-2 border-b">Description</th>
                                 <th class="px-4 py-2 border-b">Owner</th>
                                 <th class="px-4 py-2 border-b">Value</th>
                                 <th class="px-4 py-2 border-b">Quantity</th>
+                                <th class="px-4 py-2 border-b">Created At</th>
                                 <th class="px-4 py-2 border-b">Actions</th>
                             </tr>
                         </thead>
@@ -38,9 +40,11 @@
                             @foreach($products as $product)
                                 <tr>
                                     <td class="px-4 py-2 border-b">{{ $product->name }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $product->owner_id }}</td>
+                                    <td class="px-4 py-2 border-b text-gray-600 italic">{{ $product->description ?? 'No description available' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $product->owner->name ?? 'Unknown' }}</td>
                                     <td class="px-4 py-2 border-b">${{ number_format($product->value, 2) }}</td>
                                     <td class="px-4 py-2 border-b">{{ $product->quantity }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $product->created_at->format('M d, Y') }}</td>
                                     <td class="px-4 py-2 border-b">
                                         <!-- Show 'Initiate Trade' button if user is not the owner -->
                                         @if(auth()->id() != $product->owner_id)

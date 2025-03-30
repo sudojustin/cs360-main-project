@@ -12,10 +12,12 @@ class OfferController extends Controller
     // Show the offers page with all available products
     public function index()
     {
-        // $products = Product::where('owner_id', '!=', auth()->id())->get(); // Exclude user's own products
+        // Exclude the current user's products from the offers page
         $products = Product::with(['owner', 'transactions' => function ($query) {
                 $query->whereIn('status', ['pending', 'Pending']);
-            }])->get();
+            }])
+            ->where('owner_id', '!=', auth()->id())
+            ->get();
         return view('offers', compact('products'));
     }
 
@@ -33,7 +35,7 @@ class OfferController extends Controller
         // Fetch the counterparty's product (the one they would like in return)
         $counterpartyProduct = Product::where('owner_id', $counterparty_id)->first(); // Or use more precise query if necessary
 
-        // Check if there’s already a pending transaction involving this product and the counterparty's product
+        // Check if there's already a pending transaction involving this product and the counterparty's product
         $pendingTransaction = Transaction::where('productp_id', $product->id) // Initiator's product
             ->where('counterparty_id', $counterparty_id) // The other party
             ->where('status', 'Pending')
