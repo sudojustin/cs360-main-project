@@ -30,10 +30,8 @@
                                 <form action="{{ route('dashboard.product.delete', $product->id) }}" method="POST" class="ml-2">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
+                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-xs">
+                                        Delete
                                     </button>
                                 </form>
                             </td>
