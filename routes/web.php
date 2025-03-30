@@ -33,6 +33,8 @@ Route::post('/trade/reject/{transaction}', [OfferController::class, 'rejectTrade
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'showAdminDashboard'])->name('admin');
+    Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+    Route::delete('/admin/products/{product}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
 });
 
 Route::view('profile', 'profile')
