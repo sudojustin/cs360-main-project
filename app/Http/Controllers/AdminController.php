@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -13,8 +14,9 @@ class AdminController extends Controller
         // Fetch all users
         $users = User::all();
         $products = Product::all();
+        $transactions = Transaction::all();
 
-        return view('admin-dashboard', compact('users', 'products'));
+        return view('admin-dashboard', compact('users', 'products', 'transactions'));
     }
 
     public function deleteUser(User $user)
@@ -39,5 +41,13 @@ class AdminController extends Controller
         $product->delete();
         
         return back()->with('success', 'Product deleted successfully.');
+    }
+    
+    public function deleteTransaction(Transaction $transaction)
+    {
+        // Delete the transaction
+        $transaction->delete();
+        
+        return back()->with('success', 'Transaction deleted successfully.');
     }
 }

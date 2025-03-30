@@ -109,6 +109,52 @@
                     </table>
                 </div>
 
+                <!-- Transaction Table -->
+                <div class="p-6 text-gray-900">
+                    <h3 class="font-semibold text-xl">Transaction List</h3>
+
+                    <table class="min-w-full table-auto mt-4 border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="px-4 py-2 border-b text-left">ID</th>
+                                <th class="px-4 py-2 border-b text-left">Initiator</th>
+                                <th class="px-4 py-2 border-b text-left">Counterparty</th>
+                                <th class="px-4 py-2 border-b text-left">Product</th>
+                                <th class="px-4 py-2 border-b text-left">Equivalent</th>
+                                <th class="px-4 py-2 border-b text-left">Fee</th>
+                                <th class="px-4 py-2 border-b text-left">Status</th>
+                                <th class="px-4 py-2 border-b text-left">Created At</th>
+                                <th class="px-4 py-2 border-b text-left">Completed At</th>
+                                <th class="px-4 py-2 border-b text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($transactions as $transaction)
+                                <tr>
+                                    <td class="px-4 py-2 border-b">{{ $transaction->transaction_id }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $transaction->initiator->name ?? 'N/A' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $transaction->counterparty->name ?? 'N/A' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $transaction->productp->name ?? 'N/A' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $transaction->producte->name ?? 'N/A' }}</td>
+                                    <td class="px-4 py-2 border-b">${{ number_format($transaction->transaction_fee_total, 2) }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $transaction->status }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $transaction->created_at }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $transaction->completed_at ?? 'Pending' }}</td>
+                                    <td class="px-4 py-2 border-b">
+                                        <form action="{{ route('admin.transactions.delete', $transaction->transaction_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this transaction?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-xs">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
         </div>
     </div>
