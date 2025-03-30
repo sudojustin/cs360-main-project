@@ -75,28 +75,39 @@
 
                 <!-- Current Barter Status -->
                 <div class="p-6 text-gray-900">
-                    <h3 class="font-semibold text-xl">Current Barter Status</h3>
-                    <table class="table-auto w-full">
+                    <h3 class="font-semibold text-xl">Your Transactions</h3>
+                    <table class="table-auto w-full text-sm">
                         <thead>
                             <tr>
-                                <th class="px-4 py-2">Product</th>
-                                <th class="px-4 py-2">Counterparty</th>
-                                <th class="px-4 py-2">Status</th>
+                                <th class="px-2 py-1">ID</th>
+                                <th class="px-2 py-1">Initiator</th>
+                                <th class="px-2 py-1">Counterparty</th>
+                                <th class="px-2 py-1">Partner Initiator</th>
+                                <th class="px-2 py-1">Partner Counterparty</th>
+                                <th class="px-2 py-1">Product Provided</th>
+                                <th class="px-2 py-1">Product Exchanged</th>
+                                <th class="px-2 py-1">Hash Key</th>
+                                <th class="px-2 py-1">Fee Total</th>
+                                <th class="px-2 py-1">Created At</th>
+                                <th class="px-2 py-1">Completed At</th>
+                                <th class="px-2 py-1">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($transactions as $transaction)
                                 <tr>
-                                    <td class="border px-4 py-2">
-                                        {{ $transaction->productp ? $transaction->productp->name : 'Product Missing' }} →
-                                        {{ $transaction->producte ? $transaction->producte->name : 'Product Missing' }}
-                                    </td>
-                                    <td class="border px-4 py-2">
-                                        {{ $transaction->counterparty ? $transaction->counterparty->name : 'Waiting for partner' }}
-                                    </td>
-                                    <td class="border px-4 py-2">
-                                        {{ $transaction->status }}
-                                    </td>
+                                    <td class="border px-2 py-1">{{ $transaction->transaction_id }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->initiator ? $transaction->initiator->name : 'N/A' }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->counterparty ? $transaction->counterparty->name : 'Waiting' }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->partnerInitiator ? $transaction->partnerInitiator->name : 'N/A' }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->hashkey }}</td>
+                                    <td class="border px-2 py-1">${{ $transaction->transaction_fee_total }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->created_at }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->completed_at ?: 'Pending' }}</td>
+                                    <td class="border px-2 py-1">{{ $transaction->status }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
