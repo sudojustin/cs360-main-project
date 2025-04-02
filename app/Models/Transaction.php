@@ -19,7 +19,9 @@ class Transaction extends Model
         'partner_initiator_id',    // Partner of A (B) - nullable
         'partner_counterparty_id', // Partner of X (Y) - nullable
         'productp_id',             // The product being exchanged
+        'quantity_p',              // Quantity of product p being offered
         'producte_id',             // The requested equivalent product/service
+        'quantity_e',              // Quantity of product e being requested
         'hashkey',                 // Secure 16-digit transaction key
         'transaction_fee_total',   // Total cost of the transaction
         'created_at',              // When the transaction was initiated

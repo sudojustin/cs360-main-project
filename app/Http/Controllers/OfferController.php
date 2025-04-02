@@ -89,7 +89,9 @@ class OfferController extends Controller
             'initiator_id' => $initiator_id,
             'counterparty_id' => $counterparty_id,
             'productp_id' => $product->id,
+            'quantity_p' => $request->request_quantity,
             'producte_id' => $userProduct->id,
+            'quantity_e' => $request->offer_quantity,
             'hashkey' => bin2hex(random_bytes(8)),
             'transaction_fee_total' => 0,
             'status' => 'Pending',
@@ -134,5 +136,35 @@ class OfferController extends Controller
 
         // Optional: Add logic for notifying users or handling rejected trades
         return redirect()->route('offers')->with('error', 'Trade rejected.');
+    }
+
+    public function makeCounteroffer(Request $request, Transaction $transaction)
+    {
+        // Ensure the transaction is in 'pending' state
+        if ($transaction->status != 'Pending') {
+            return redirect()->route('offers')->with('error', 'Trade has already been processed.');
+        }
+
+        // Validate the request
+        $request->validate([
+            'counteroffer_quantity_want' => 'required|integer|min:1',
+            'counteroffer_quantity_offer' => 'required|integer|min:1',
+        ]);
+
+        // Check if the user is the counterparty (the one receiving the offer)
+        if ($transaction->counterparty_id !== auth()->id()) {
+            return redirect()->route('offers')->with('error', 'You can only make counteroffers on offers sent to you.');
+        }
+
+        // Update the transaction with the counteroffer
+        $transaction->update([
+            'status' => 'Pending',
+            'counterparty_id' => $transaction->initiator_id,
+            'initiator_id' => auth()->id(),
+            'quantity_e' => $request->counteroffer_quantity_want,
+            'quantity_p' => $request->counteroffer_quantity_offer,
+        ]);
+
+        return redirect()->route('offers')->with('success', 'Counteroffer sent successfully!');
     }
 }

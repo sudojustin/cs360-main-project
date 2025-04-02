@@ -10,6 +10,109 @@
 
     <div class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Pending Offers Section -->
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-green-700 transition-all duration-300 hover:shadow-xl mb-6">
+                <div class="p-6 text-gray-900">
+                    <h3 class="font-semibold text-xl text-gray-900 flex items-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                        </svg>
+                        Pending Trade Offers From Others
+                    </h3>
+                    
+                    @if($pendingOffers->isEmpty())
+                        <div class="bg-blue-50 rounded-lg p-4 text-gray-500 italic flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                            You currently have no pending trade offers.
+                        </div>
+                    @else
+                        <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
+                            <table class="min-w-full table-auto border-collapse">
+                                <thead>
+                                    <tr class="bg-green-50 text-green-800 uppercase text-xs">
+                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">From</th>
+                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">They Offer You</th>
+                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">They Want From You</th>
+                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Date Received</th>
+                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($pendingOffers as $offer)
+                                        <tr class="hover:bg-green-50 transition-colors duration-150 ease-in-out">
+                                            <td class="px-4 py-3 border-b border-gray-200 font-medium">{{ $offer->initiator->name }}</td>
+                                            <td class="px-4 py-3 border-b border-gray-200">
+                                                @if($offer->producte)
+                                                    <span class="font-medium">{{ $offer->producte->name }}</span>
+                                                    <span class="text-sm text-gray-500 block">
+                                                        Quantity: {{ $offer->quantity_e }} | Value: ${{ number_format($offer->producte->value, 2) }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-red-500">Unknown Product</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 border-b border-gray-200">
+                                                @if($offer->productp)
+                                                    <span class="font-medium">{{ $offer->productp->name }}</span>
+                                                    <span class="text-sm text-gray-500 block">
+                                                        Quantity: {{ $offer->quantity_p }} | Value: ${{ number_format($offer->productp->value, 2) }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-red-500">Unknown Product</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 border-b border-gray-200 text-gray-600">
+                                                {{ \Carbon\Carbon::parse($offer->created_at)->format('M d, Y') }}
+                                            </td>
+                                            <td class="px-4 py-3 border-b border-gray-200">
+                                                <div class="flex space-x-2">
+                                                    <form action="{{ route('trade.accept', $offer) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800 flex items-center shadow-sm transition-all duration-200 hover:shadow">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            Accept
+                                                        </button>
+                                                    </form>
+                                                    <form action="{{ route('trade.reject', $offer) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="px-4 py-2 bg-white border border-red-500 text-red-600 rounded-md hover:bg-red-50 flex items-center shadow-sm transition-all duration-200 hover:shadow">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            Reject
+                                                        </button>
+                                                    </form>
+                                                    <button 
+                                                        type="button" 
+                                                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center shadow-sm transition-all duration-200 hover:shadow open-counteroffer-modal"
+                                                        data-offer-id="{{ $offer->transaction_id }}"
+                                                        data-want-name="{{ $offer->producte->name }}"
+                                                        data-want-quantity="{{ $offer->quantity_e }}"
+                                                        data-offer-name="{{ $offer->productp->name }}"
+                                                        data-offer-quantity="{{ $offer->quantity_p }}"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                                                        </svg>
+                                                        Counteroffer
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Products Available for Trading Section -->
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-green-700 transition-all duration-300 hover:shadow-xl">
                 <div class="p-6 text-gray-900">
                     @if(session('success'))
@@ -119,98 +222,6 @@
         </div>
     </div>
 
-    <!-- Pending Offers Section -->
-    <div class="py-6 bg-gray-50">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-green-700 transition-all duration-300 hover:shadow-xl">
-                <div class="p-6 text-gray-900">
-                    <h3 class="font-semibold text-xl text-gray-900 flex items-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
-                        </svg>
-                        Pending Trade Offers From Others
-                    </h3>
-                    
-                    @if($pendingOffers->isEmpty())
-                        <div class="bg-blue-50 rounded-lg p-4 text-gray-500 italic flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                            </svg>
-                            You currently have no pending trade offers.
-                        </div>
-                    @else
-                        <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
-                            <table class="min-w-full table-auto border-collapse">
-                                <thead>
-                                    <tr class="bg-green-50 text-green-800 uppercase text-xs">
-                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">From</th>
-                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">They Want</th>
-                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">They Offer</th>
-                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Date Received</th>
-                                        <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($pendingOffers as $offer)
-                                        <tr class="hover:bg-green-50 transition-colors duration-150 ease-in-out">
-                                            <td class="px-4 py-3 border-b border-gray-200 font-medium">{{ $offer->initiator->name }}</td>
-                                            <td class="px-4 py-3 border-b border-gray-200">
-                                                @if($offer->producte)
-                                                    <span class="font-medium">{{ $offer->producte->name }}</span>
-                                                    <span class="text-sm text-gray-500 block">
-                                                        Value: ${{ number_format($offer->producte->value, 2) }}
-                                                    </span>
-                                                @else
-                                                    <span class="text-red-500">Unknown Product</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-4 py-3 border-b border-gray-200">
-                                                @if($offer->productp)
-                                                    <span class="font-medium">{{ $offer->productp->name }}</span>
-                                                    <span class="text-sm text-gray-500 block">
-                                                        Value: ${{ number_format($offer->productp->value, 2) }}
-                                                    </span>
-                                                @else
-                                                    <span class="text-red-500">Unknown Product</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-4 py-3 border-b border-gray-200 text-gray-600">
-                                                {{ \Carbon\Carbon::parse($offer->created_at)->format('M d, Y') }}
-                                            </td>
-                                            <td class="px-4 py-3 border-b border-gray-200">
-                                                <div class="flex space-x-2">
-                                                    <form action="{{ route('trade.accept', $offer) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800 flex items-center shadow-sm transition-all duration-200 hover:shadow">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                                            </svg>
-                                                            Accept
-                                                        </button>
-                                                    </form>
-                                                    <form action="{{ route('trade.reject', $offer) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="px-4 py-2 bg-white border border-red-500 text-red-600 rounded-md hover:bg-red-50 flex items-center shadow-sm transition-all duration-200 hover:shadow">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                                            </svg>
-                                                            Reject
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Trade Modal -->
     <div id="tradeModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center hidden z-50 transition-all duration-300">
         <div class="bg-white p-6 rounded-lg shadow-2xl w-full max-w-md border-l-4 border-green-700 modal-content">
@@ -294,6 +305,80 @@
                             <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
                         </svg>
                         Initiate Trade
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Counteroffer Modal -->
+    <div id="counterofferModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center hidden z-50 transition-all duration-300">
+        <div class="bg-white p-6 rounded-lg shadow-2xl w-full max-w-md border-l-4 border-blue-700 modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-gray-900 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                    </svg>
+                    Make Counteroffer
+                </h3>
+                <button type="button" class="text-gray-500 hover:text-gray-700 close-counteroffer-modal transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="counterofferForm" method="POST" action="">
+                @csrf
+                <div class="mb-5 bg-blue-50 rounded-lg p-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Original Offer:</label>
+                    <div class="flex justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-700">They Want From You:</h4>
+                            <p id="originalWantName" class="font-semibold text-blue-800"></p>
+                            <div class="mt-1 text-sm text-gray-600">
+                                <div>Quantity: <span id="originalWantQuantity" class="font-medium"></span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700">They Offer You:</h4>
+                            <p id="originalOfferName" class="font-semibold text-blue-800"></p>
+                            <div class="mt-1 text-sm text-gray-600">
+                                <div>Quantity: <span id="originalOfferQuantity" class="font-medium"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-5">
+                    <label for="counteroffer_quantity_want" class="block text-gray-700 text-sm font-bold mb-2">New Quantity You'll Give Them:</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <input type="number" name="counteroffer_quantity_want" id="counteroffer_quantity_want" min="1" value="1" 
+                            class="block w-full pr-10 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" required>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">unit(s)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <label for="counteroffer_quantity_offer" class="block text-gray-700 text-sm font-bold mb-2">New Quantity You'll Receive:</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <input type="number" name="counteroffer_quantity_offer" id="counteroffer_quantity_offer" min="1" value="1" 
+                            class="block w-full pr-10 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" required>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">unit(s)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end mt-8 space-x-3">
+                    <button type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors duration-200 close-counteroffer-modal">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center shadow transition-all duration-200 ease-in-out transform hover:translate-y-[-1px]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                        </svg>
+                        Submit Counteroffer
                     </button>
                 </div>
             </form>
@@ -397,8 +482,14 @@
                 
                 // Update the form action to include the owner information
                 const formAction = tradeForm.action;
-                const baseUrl = formAction.split('/').slice(0, -1).join('/');
-                tradeForm.action = `${baseUrl}/${this.value}?owner=${owner}`;
+                // Extract the product ID from the current action URL
+                const productIdRegex = /\/trade\/initiate\/(\d+)/;
+                const match = formAction.match(productIdRegex);
+                
+                if (match && match[1]) {
+                    const requestedProductId = match[1]; // This is the product we want
+                    tradeForm.action = `/trade/initiate/${requestedProductId}`;
+                }
             }
         });
 
@@ -427,6 +518,92 @@
             ownerInput.name = 'product_owner';
             ownerInput.value = owner;
             this.appendChild(ownerInput);
+        });
+
+        // Counteroffer modal functionality
+        const counterofferModal = document.getElementById('counterofferModal');
+        const openCounterofferButtons = document.querySelectorAll('.open-counteroffer-modal');
+        const closeCounterofferButtons = document.querySelectorAll('.close-counteroffer-modal');
+        const counterofferModalContent = counterofferModal.querySelector('.modal-content');
+        const counterofferForm = document.getElementById('counterofferForm');
+        
+        // Open counteroffer modal
+        openCounterofferButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const offerId = this.getAttribute('data-offer-id');
+                const wantName = this.getAttribute('data-want-name');
+                const wantQuantity = this.getAttribute('data-want-quantity');
+                const offerName = this.getAttribute('data-offer-name');
+                const offerQuantity = this.getAttribute('data-offer-quantity');
+                
+                document.getElementById('originalWantName').textContent = wantName;
+                document.getElementById('originalWantQuantity').textContent = wantQuantity;
+                document.getElementById('originalOfferName').textContent = offerName;
+                document.getElementById('originalOfferQuantity').textContent = offerQuantity;
+                
+                // Set the form action - update to match route definition
+                counterofferForm.action = "{{ route('trade.counteroffer', ['transaction' => ':transaction']) }}".replace(':transaction', offerId);
+                
+                // Show modal with animation
+                counterofferModal.classList.remove('hidden');
+                setTimeout(() => {
+                    counterofferModalContent.classList.add('animate-appear');
+                }, 10);
+            });
+        });
+        
+        // Close counteroffer modal
+        closeCounterofferButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                counterofferModalContent.classList.remove('animate-appear');
+                counterofferModalContent.classList.add('animate-disappear');
+                
+                setTimeout(() => {
+                    counterofferModal.classList.add('hidden');
+                    counterofferModalContent.classList.remove('animate-disappear');
+                }, 300);
+            });
+        });
+        
+        // Close counteroffer modal when clicking outside
+        counterofferModal.addEventListener('click', function(e) {
+            if (e.target === counterofferModal) {
+                counterofferModalContent.classList.remove('animate-appear');
+                counterofferModalContent.classList.add('animate-disappear');
+                
+                setTimeout(() => {
+                    counterofferModal.classList.add('hidden');
+                    counterofferModalContent.classList.remove('animate-disappear');
+                }, 300);
+            }
+        });
+        
+        // Counteroffer quantity validation
+        const counterofferWantQuantityInput = document.getElementById('counteroffer_quantity_want');
+        const counterofferOfferQuantityInput = document.getElementById('counteroffer_quantity_offer');
+        
+        counterofferWantQuantityInput.addEventListener('change', function() {
+            if (parseInt(this.value) < 1) {
+                this.value = 1;
+            }
+        });
+        
+        counterofferOfferQuantityInput.addEventListener('change', function() {
+            if (parseInt(this.value) < 1) {
+                this.value = 1;
+            }
+        });
+
+        // Counteroffer form submission validation
+        counterofferForm.addEventListener('submit', function(e) {
+            const wantQuantity = parseInt(counterofferWantQuantityInput.value);
+            const offerQuantity = parseInt(counterofferOfferQuantityInput.value);
+
+            if (wantQuantity < 1 || offerQuantity < 1) {
+                e.preventDefault();
+                alert('Quantities must be at least 1.');
+                return;
+            }
         });
     });
     </script>

@@ -38,6 +38,10 @@ Route::post('/trade/reject/{transaction}', [OfferController::class, 'rejectTrade
     ->middleware(['auth', 'verified'])
     ->name('trade.reject');
 
+Route::post('/trade/counteroffer/{transaction}', [OfferController::class, 'makeCounteroffer'])
+    ->middleware(['auth', 'verified'])
+    ->name('trade.counteroffer');
+
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'showAdminDashboard'])->name('admin');
     Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
