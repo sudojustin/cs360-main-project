@@ -1,65 +1,73 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-green-700" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+            </svg>
             {{ __('Offers') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-l-4 border-green-700">
                 <div class="p-6 text-gray-900">
-
                     @if(session('success'))
-                        <div class="text-green-500">
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
                             {{ session('success') }}
                         </div>
                     @endif
 
                     @if(session('error'))
-                        <div class="text-red-500">
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
                             {{ session('error') }}
                         </div>
                     @endif
 
-                    <h3 class="font-semibold text-xl">Products Available for Trading</h3>
+                    <h3 class="font-semibold text-xl text-gray-900 flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                        </svg>
+                        Products Available for Trading
+                    </h3>
 
-                    <table class="min-w-full table-auto mt-4 border-collapse">
+                    <table class="min-w-full table-auto border-collapse">
                         <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-4 py-2 border-b text-left">Product</th>
-                                <th class="px-4 py-2 border-b text-left">Description</th>
-                                <th class="px-4 py-2 border-b text-left">Owner</th>
-                                <th class="px-4 py-2 border-b text-left">Value</th>
-                                <th class="px-4 py-2 border-b text-left">Quantity</th>
-                                <th class="px-4 py-2 border-b text-left">Created At</th>
-                                <th class="px-4 py-2 border-b text-left">Actions</th>
+                            <tr class="bg-blue-50">
+                                <th class="px-4 py-2 border-b text-left text-green-800">Product</th>
+                                <th class="px-4 py-2 border-b text-left text-green-800">Description</th>
+                                <th class="px-4 py-2 border-b text-left text-green-800">Owner</th>
+                                <th class="px-4 py-2 border-b text-left text-green-800">Value</th>
+                                <th class="px-4 py-2 border-b text-left text-green-800">Quantity</th>
+                                <th class="px-4 py-2 border-b text-left text-green-800">Created At</th>
+                                <th class="px-4 py-2 border-b text-left text-green-800">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($products as $product)
-                                <tr>
-                                    <td class="px-4 py-2 border-b">{{ $product->name }}</td>
-                                    <td class="px-4 py-2 border-b text-gray-600 italic">{{ $product->description ?? 'No description available' }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $product->owner->name ?? 'Unknown' }}</td>
-                                    <td class="px-4 py-2 border-b">${{ number_format($product->value, 2) }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $product->quantity }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $product->created_at->format('M d, Y') }}</td>
-                                    <td class="px-4 py-2 border-b">
-                                        <!-- Show 'Initiate Trade' button if user is not the owner -->
+                                <tr class="hover:bg-blue-50">
+                                    <td class="px-4 py-2 border-b border-gray-200">{{ $product->name }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-gray-600 italic">{{ $product->description ?? 'No description available' }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200">{{ $product->owner->name ?? 'Unknown' }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200">${{ number_format($product->value, 2) }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200">{{ $product->quantity }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200">{{ $product->created_at->format('M d, Y') }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200">
                                         @if(auth()->id() != $product->owner_id)
                                             <button 
                                                 type="button" 
-                                                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 open-trade-modal"
+                                                class="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 flex items-center open-trade-modal"
                                                 data-product-id="{{ $product->id }}"
                                                 data-product-name="{{ $product->name }}"
                                                 data-product-quantity="{{ $product->quantity }}"
                                                 data-product-value="{{ $product->value }}"
                                             >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                                                </svg>
                                                 Initiate Trade
                                             </button>
                                         @else
-                                            <!-- Check if the user is the owner and there is a pending trade with them -->
                                             @php
                                                 $pendingOffer = \App\Models\Transaction::where(function ($query) use ($product) {
                                                         $query->where('productp_id', $product->id)
@@ -70,27 +78,27 @@
                                                     ->first();
                                             @endphp
 
-                                            <!-- Debugging: Show if no pending offer exists -->
-                                            @if(!$pendingOffer)
-                                                <div class="text-red-500">
-                                                    No pending offer for this product.
-                                                </div>
-                                            @endif
-
-                                            <!-- Show accept/reject buttons if a pending trade exists -->
                                             @if($pendingOffer)
-                                                <form action="{{ route('trade.accept', $pendingOffer) }}" method="POST" class="inline">
-                                                    @csrf
-                                                    <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-                                                        Accept Trade
-                                                    </button>
-                                                </form>
-                                                <form action="{{ route('trade.reject', $pendingOffer) }}" method="POST" class="inline">
-                                                    @csrf
-                                                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-                                                        Reject Trade
-                                                    </button>
-                                                </form>
+                                                <div class="flex space-x-2">
+                                                    <form action="{{ route('trade.accept', $pendingOffer) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 flex items-center">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            Accept
+                                                        </button>
+                                                    </form>
+                                                    <form action="{{ route('trade.reject', $pendingOffer) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            Reject
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             @endif
                                         @endif
                                     </td>
@@ -106,28 +114,34 @@
     <!-- Pending Offers Section -->
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-l-4 border-green-700">
                 <div class="p-6 text-gray-900">
-                    <h3 class="font-semibold text-xl mb-4">Pending Trade Offers From Others</h3>
+                    <h3 class="font-semibold text-xl text-gray-900 flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                        </svg>
+                        Pending Trade Offers From Others
+                    </h3>
                     
                     @if($pendingOffers->isEmpty())
                         <p class="text-gray-500 italic">You currently have no pending trade offers.</p>
                     @else
                         <table class="min-w-full table-auto border-collapse">
                             <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="px-4 py-2 border-b text-left">From</th>
-                                    <th class="px-4 py-2 border-b text-left">They Want</th>
-                                    <th class="px-4 py-2 border-b text-left">They Offer</th>
-                                    <th class="px-4 py-2 border-b text-left">Date Received</th>
-                                    <th class="px-4 py-2 border-b text-left">Actions</th>
+                                <tr class="bg-blue-50">
+                                    <th class="px-4 py-2 border-b text-left text-green-800">From</th>
+                                    <th class="px-4 py-2 border-b text-left text-green-800">They Want</th>
+                                    <th class="px-4 py-2 border-b text-left text-green-800">They Offer</th>
+                                    <th class="px-4 py-2 border-b text-left text-green-800">Date Received</th>
+                                    <th class="px-4 py-2 border-b text-left text-green-800">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($pendingOffers as $offer)
-                                    <tr>
-                                        <td class="px-4 py-2 border-b">{{ $offer->initiator->name }}</td>
-                                        <td class="px-4 py-2 border-b">
+                                    <tr class="hover:bg-blue-50">
+                                        <td class="px-4 py-2 border-b border-gray-200">{{ $offer->initiator->name }}</td>
+                                        <td class="px-4 py-2 border-b border-gray-200">
                                             @if($offer->producte)
                                                 {{ $offer->producte->name }}
                                                 <span class="text-sm text-gray-500">
@@ -137,7 +151,7 @@
                                                 <span class="text-red-500">Unknown Product</span>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-2 border-b">
+                                        <td class="px-4 py-2 border-b border-gray-200">
                                             @if($offer->productp)
                                                 {{ $offer->productp->name }}
                                                 <span class="text-sm text-gray-500">
@@ -147,20 +161,26 @@
                                                 <span class="text-red-500">Unknown Product</span>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-2 border-b">
+                                        <td class="px-4 py-2 border-b border-gray-200">
                                             {{ \Carbon\Carbon::parse($offer->created_at)->format('M d, Y') }}
                                         </td>
-                                        <td class="px-4 py-2 border-b">
+                                        <td class="px-4 py-2 border-b border-gray-200">
                                             <div class="flex space-x-2">
                                                 <form action="{{ route('trade.accept', $offer) }}" method="POST">
                                                     @csrf
-                                                    <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                                                    <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 flex items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                        </svg>
                                                         Accept
                                                     </button>
                                                 </form>
                                                 <form action="{{ route('trade.reject', $offer) }}" method="POST">
                                                     @csrf
-                                                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                                                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                        </svg>
                                                         Reject
                                                     </button>
                                                 </form>
@@ -178,9 +198,14 @@
 
     <!-- Trade Modal -->
     <div id="tradeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md border-l-4 border-green-700">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold">Initiate Trade</h3>
+                <h3 class="text-xl font-semibold text-gray-900 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                    </svg>
+                    Initiate Trade
+                </h3>
                 <button type="button" class="text-gray-500 hover:text-gray-700 close-modal text-2xl font-bold">&times;</button>
             </div>
             
@@ -190,7 +215,7 @@
                     <label class="block text-gray-700 text-sm font-bold mb-2">Product You Want:</label>
                     <div class="flex items-center">
                         <p id="requestedProductName" class="font-semibold"></p>
-                        <p class="ml-2">
+                        <p class="ml-2 text-gray-600">
                             (Available: <span id="requestedProductQuantity"></span>, 
                             Value: $<span id="requestedProductValue"></span>)
                         </p>
@@ -200,13 +225,13 @@
                 <div class="mb-4">
                     <label for="request_quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantity You Want:</label>
                     <input type="number" name="request_quantity" id="request_quantity" min="1" value="1" 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" required>
                 </div>
                 
                 <div class="mb-4">
                     <label for="user_product_id" class="block text-gray-700 text-sm font-bold mb-2">Your Product to Offer:</label>
                     <select name="user_product_id" id="user_product_id" 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" required>
                         <option value="">-- Select Your Product --</option>
                         @foreach($userProducts as $userProduct)
                             <option value="{{ $userProduct->id }}" data-quantity="{{ $userProduct->quantity }}" data-value="{{ $userProduct->value }}">
@@ -219,12 +244,17 @@
                 <div class="mb-4">
                     <label for="offer_quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantity to Offer:</label>
                     <input type="number" name="offer_quantity" id="offer_quantity" min="1" value="1" 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" required>
                 </div>
                 
                 <div class="flex justify-end mt-6">
-                    <button type="button" class="px-4 py-2 bg-gray-300 text-gray-800 rounded mr-2 close-modal">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Initiate Trade</button>
+                    <button type="button" class="px-4 py-2 bg-gray-300 text-gray-800 rounded mr-2 hover:bg-gray-400 close-modal">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                        </svg>
+                        Initiate Trade
+                    </button>
                 </div>
             </form>
         </div>
