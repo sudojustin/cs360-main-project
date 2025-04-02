@@ -26,6 +26,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route for displaying offers
     Route::get('/offers', [OfferController::class, 'index'])->name('offers');
     
+    // Route for fetching partner products
+    Route::get('/partner/{user}/products', [OfferController::class, 'getPartnerProducts'])->name('partner.products');
+    
     // Route for calculating equivalent amounts based on the equivalence table
     Route::post('/trade/calculate-equivalent', [OfferController::class, 'calculateEquivalent'])->name('trade.calculate');
     

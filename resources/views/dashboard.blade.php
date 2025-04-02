@@ -115,12 +115,12 @@
                             <thead>
                                 <tr class="bg-yellow-50 text-yellow-800 uppercase text-xs">
                                     <th class="px-3 py-2.5 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Initiator</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Counterparty</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Partner Initiator</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Partner Counterparty</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product Provided</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product Exchanged</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Initiator (A)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Counterparty (X)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">A's Partner (B)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">X's Partner (Y)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product (X→A)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product (B→Y)</th>
                                     <th class="px-3 py-2.5 text-left font-medium tracking-wider">Hash Key</th>
                                     <th class="px-3 py-2.5 text-left font-medium tracking-wider">Fee Total</th>
                                     <th class="px-3 py-2.5 text-left font-medium tracking-wider">Created At</th>
@@ -140,8 +140,8 @@
                                         <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->counterparty ? $transaction->counterparty->name : 'Waiting' }}</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->partnerInitiator ? $transaction->partnerInitiator->name : 'N/A' }}</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }} ({{ $transaction->quantity_p }})</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }} ({{ $transaction->quantity_e }})</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5 font-mono text-xs">{{ $transaction->hashkey }}</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5 font-medium text-green-700">${{ $transaction->transaction_fee_total }}</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5 text-xs">{{ $transaction->created_at }}</td>
@@ -181,12 +181,12 @@
                             <thead>
                                 <tr class="bg-green-50 text-green-800 uppercase text-xs">
                                     <th class="px-3 py-2.5 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Initiator</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Counterparty</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Partner Initiator</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Partner Counterparty</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product Provided</th>
-                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product Exchanged</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Initiator (A)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Counterparty (X)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">A's Partner (B)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">X's Partner (Y)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product (X→A)</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product (B→Y)</th>
                                     <th class="px-3 py-2.5 text-left font-medium tracking-wider">Hash Key</th>
                                     <th class="px-3 py-2.5 text-left font-medium tracking-wider">Fee Total</th>
                                     <th class="px-3 py-2.5 text-left font-medium tracking-wider">Created At</th>
@@ -207,8 +207,8 @@
                                         <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->counterparty ? $transaction->counterparty->name : 'N/A' }}</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->partnerInitiator ? $transaction->partnerInitiator->name : 'N/A' }}</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }} ({{ $transaction->quantity_p }})</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }} ({{ $transaction->quantity_e }})</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5 font-mono text-xs">{{ $transaction->hashkey }}</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5 font-medium text-green-700">${{ $transaction->transaction_fee_total }}</td>
                                         <td class="border-b border-gray-200 px-3 py-2.5 text-xs">{{ $transaction->created_at }}</td>

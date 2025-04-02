@@ -60,13 +60,44 @@ class OfferController extends Controller
             ->pluck('product_id')
             ->toArray();
         
+        // Get all users for partner selection
+        $users = User::where('id', '!=', auth()->id())->get();
+        
+        // Get partner's products if partner exists
+        $partnerProducts = collect([]);
+        if (auth()->user()->partner_id) {
+            $partnerProducts = UserProduct::with('product')
+                ->where('user_id', auth()->user()->partner_id)
+                ->where('quantity', '>', 0)
+                ->get();
+        }
+        
         return view('offers', compact(
             'allProducts', 
             'userInventory', 
             'otherUserProducts', 
             'pendingTrades',
-            'userProductIds'
+            'userProductIds',
+            'users',
+            'partnerProducts'
         ));
+    }
+
+    // Get products available from a specific user (for partner selection)
+    public function getPartnerProducts(User $user)
+    {
+        // Ensure the requested user is not the current user
+        if ($user->id === auth()->id()) {
+            return response()->json(['error' => 'Cannot select yourself as partner'], 400);
+        }
+        
+        // Get partner's inventory with available products
+        $partnerInventory = UserProduct::with('product')
+            ->where('user_id', $user->id)
+            ->where('quantity', '>', 0)
+            ->get();
+            
+        return response()->json($partnerInventory);
     }
 
     // Calculate equivalent product amount based on equivalence table
@@ -123,21 +154,36 @@ class OfferController extends Controller
             'quantity_p' => 'required|integer|min:1',
             'quantity_e' => 'required|integer|min:1',
             'counterparty_id' => 'required|exists:users,id',
+            'partner_b' => 'required|exists:users,id',
         ]);
 
-        $initiator_id = auth()->id();
-        $counterparty_id = $request->counterparty_id;
+        $initiator_id = auth()->id();       // Role A
+        $counterparty_id = $request->counterparty_id; // Role X
+        $partner_b_id = $request->partner_b;  // Role B
+        
+        // Get the counterparty's partner as Partner Y
+        $counterparty = User::find($counterparty_id);
+        $partner_y_id = $counterparty->partner_id; // Role Y
+        
         $productp_id = $request->productp_id;
         $producte_id = $request->producte_id;
         $quantity_p = $request->quantity_p;
         $quantity_e = $request->quantity_e;
 
-        // Check if the initiator is not the same as counterparty
+        // Validation checks
         if ($initiator_id == $counterparty_id) {
             return redirect()->route('offers')->with('error', 'You cannot initiate a trade with yourself.');
         }
 
-        // Check if the counterparty has enough of the requested product
+        if ($partner_b_id == $initiator_id || $partner_b_id == $counterparty_id) {
+            return redirect()->route('offers')->with('error', 'Your partner (B) cannot be yourself or the counterparty.');
+        }
+
+        if ($partner_y_id && ($partner_y_id == $counterparty_id || $partner_y_id == $initiator_id || $partner_y_id == $partner_b_id)) {
+            return redirect()->route('offers')->with('error', 'The counterparty\'s partner (Y) cannot be the same as any other party in the trade.');
+        }
+
+        // Check if the counterparty has enough of the requested product (P)
         $counterpartyInventory = UserProduct::where('user_id', $counterparty_id)
             ->where('product_id', $productp_id)
             ->first();
@@ -146,13 +192,13 @@ class OfferController extends Controller
             return redirect()->route('offers')->with('error', 'The counterparty does not have enough quantity of that product available.');
         }
         
-        // Check if the initiator has enough of the offered product
-        $initiatorInventory = UserProduct::where('user_id', $initiator_id)
+        // Check if the partner has enough of the offered product (E)
+        $partnerInventory = UserProduct::where('user_id', $partner_b_id)
             ->where('product_id', $producte_id)
             ->first();
             
-        if (!$initiatorInventory || $initiatorInventory->quantity < $quantity_e) {
-            return redirect()->route('offers')->with('error', 'You do not have enough quantity of your product to offer.');
+        if (!$partnerInventory || $partnerInventory->quantity < $quantity_e) {
+            return redirect()->route('offers')->with('error', 'Your partner does not have enough quantity of the product to offer.');
         }
 
         // Check for an existing pending transaction
@@ -167,13 +213,9 @@ class OfferController extends Controller
             return redirect()->route('offers')->with('error', 'There is already a pending trade for these products.');
         }
 
-        // Get partners for both users
-        $initiator = User::find($initiator_id);
-        $counterparty = User::find($counterparty_id);
-        
-        // Generate secure 16-digit hash key
+        // Generate secure 16-digit hash key for the four-party transaction
         $hashkey = bin2hex(random_bytes(8));
-        // Split hash for anonymity
+        // Split hash for anonymity - first half for party A, second half for party Y
         $hashFirst = substr($hashkey, 0, 8);
         $hashSecond = substr($hashkey, 8, 8);
         
@@ -199,24 +241,35 @@ class OfferController extends Controller
         $valueEWithCost = $productE->value * $quantity_e * $transferCostE;
         $totalFee = $valuePWithCost + $valueEWithCost;
 
-        // Create a new transaction
-        $transaction = Transaction::create([
-            'initiator_id' => $initiator_id,
-            'counterparty_id' => $counterparty_id,
-            'partner_initiator_id' => $initiator->partner_id, // B
-            'partner_counterparty_id' => $counterparty->partner_id, // Y
-            'productp_id' => $productp_id,
+        // Create a new transaction with four-party information, using auto-increment ID
+        $transaction = new Transaction([
+            'initiator_id' => $initiator_id, // Role A
+            'counterparty_id' => $counterparty_id, // Role X
+            'partner_b_id' => $partner_b_id, // Role B
+            'partner_y_id' => $partner_y_id, // Role Y
+            'productp_id' => $productp_id, // Product from X to A
+            'producte_id' => $producte_id, // Product from B to Y
             'quantity_p' => $quantity_p,
-            'producte_id' => $producte_id,
             'quantity_e' => $quantity_e,
-            'hashkey' => $hashkey,
-            'transaction_fee_total' => $totalFee,
             'status' => 'Pending',
+            'hashkey' => $hashkey, // Store the full hash
+            'hash_key' => $hashkey, // Store the full hash (duplicate for backward compatibility)
+            'hash_first' => $hashFirst, // First half for A
+            'hash_second' => $hashSecond, // Second half for Y
+            'last_action_by' => $initiator_id,
+            'fee_amount' => $totalFee,
+            'transaction_fee_total' => $totalFee // Duplicate for backward compatibility
         ]);
-
-        // Notify users of the transaction (here we would send hash halves)
-        // For now, just show in a session message
-        return redirect()->route('offers')->with('success', 'Trade offer sent successfully! Your transaction code (first half) is: ' . $hashFirst);
+        
+        $transaction->save();
+        
+        // Determine if Y exists and provide appropriate message
+        $successMessage = 'Four-party trade initiated successfully! Your hash key part is: ' . $hashFirst;
+        if (!$partner_y_id) {
+            $successMessage .= ' Note: The counterparty does not have a partner set yet. They will need to select one to complete the four-party exchange.';
+        }
+        
+        return redirect()->route('offers')->with('success', $successMessage);
     }
 
     public function acceptTrade(Transaction $transaction)
@@ -257,13 +310,13 @@ class OfferController extends Controller
             return redirect()->route('offers')->with('error', 'The counterparty no longer has enough quantity of the requested product.');
         }
         
-        // Check if the initiator still has enough inventory
-        $initiatorInventory = UserProduct::where('user_id', $transaction->initiator_id)
+        // Check if the partner B still has enough inventory of product E
+        $partnerBInventory = UserProduct::where('user_id', $transaction->partner_b_id)
             ->where('product_id', $transaction->producte_id)
             ->first();
             
-        if (!$initiatorInventory || $initiatorInventory->quantity < $transaction->quantity_e) {
-            return redirect()->route('offers')->with('error', 'The initiator no longer has enough quantity of their offered product.');
+        if (!$partnerBInventory || $partnerBInventory->quantity < $transaction->quantity_e) {
+            return redirect()->route('offers')->with('error', 'The initiator\'s partner no longer has enough quantity of their offered product.');
         }
 
         // Begin transaction to ensure atomicity
@@ -275,11 +328,12 @@ class OfferController extends Controller
                 'transaction_id' => $transaction->transaction_id
             ]);
             
-            $initiatorInventory->quantity -= $transaction->quantity_e;
+            // Reduce quantity from Partner B (not initiator)
+            $partnerBInventory->quantity -= $transaction->quantity_e;
             $counterpartyInventory->quantity -= $transaction->quantity_p;
             
             // Save changes
-            $initiatorInventory->save();
+            $partnerBInventory->save();
             $counterpartyInventory->save();
             
             // Apply transfer costs
@@ -308,23 +362,34 @@ class OfferController extends Controller
                 $quantityEAfterCost = 1;
             }
             
-            // Add quantities to buyers (ensuring records exist)
+            // Add quantities to proper recipients
+            // Initiator (A) receives product P
             $initiatorReceivesProduct = UserProduct::firstOrCreate(
                 ['user_id' => $transaction->initiator_id, 'product_id' => $transaction->productp_id],
                 ['quantity' => 0]
             );
             
-            $counterpartyReceivesProduct = UserProduct::firstOrCreate(
-                ['user_id' => $transaction->counterparty_id, 'product_id' => $transaction->producte_id],
-                ['quantity' => 0]
-            );
+            // Partner Y receives product E (if Y exists)
+            if ($transaction->partner_y_id) {
+                $partnerYReceivesProduct = UserProduct::firstOrCreate(
+                    ['user_id' => $transaction->partner_y_id, 'product_id' => $transaction->producte_id],
+                    ['quantity' => 0]
+                );
+                $partnerYReceivesProduct->quantity += $quantityEAfterCost;
+                $partnerYReceivesProduct->save();
+            } else {
+                // Fallback: If no Partner Y, then Counterparty (X) receives it
+                $counterpartyReceivesProduct = UserProduct::firstOrCreate(
+                    ['user_id' => $transaction->counterparty_id, 'product_id' => $transaction->producte_id],
+                    ['quantity' => 0]
+                );
+                $counterpartyReceivesProduct->quantity += $quantityEAfterCost;
+                $counterpartyReceivesProduct->save();
+            }
             
-            // Update receiving inventories with post-cost quantities
+            // Update initiator inventory
             $initiatorReceivesProduct->quantity += $quantityPAfterCost;
-            $counterpartyReceivesProduct->quantity += $quantityEAfterCost;
-            
             $initiatorReceivesProduct->save();
-            $counterpartyReceivesProduct->save();
             
             // Update transaction status
             $transaction->status = 'Completed';
@@ -335,10 +400,17 @@ class OfferController extends Controller
             \DB::commit();
             
             // Summarize the trade for the success message
-            $summary = "Trade completed: " .
-                "You " . ($currentUserId == $transaction->initiator_id ? 
-                    "received {$quantityPAfterCost} {$productP->name} and gave {$transaction->quantity_e} {$productE->name}" :
-                    "received {$quantityEAfterCost} {$productE->name} and gave {$transaction->quantity_p} {$productP->name}");
+            $summary = "Four-party trade completed successfully! ";
+            
+            if ($currentUserId == $transaction->initiator_id) {
+                $summary .= "You received {$quantityPAfterCost} {$productP->name}.";
+            } else if ($currentUserId == $transaction->counterparty_id) {
+                if (!$transaction->partner_y_id) {
+                    $summary .= "You gave {$transaction->quantity_p} {$productP->name} and received {$quantityEAfterCost} {$productE->name}.";
+                } else {
+                    $summary .= "You gave {$transaction->quantity_p} {$productP->name}.";
+                }
+            }
             
             return redirect()->route('offers')->with('success', $summary);
             

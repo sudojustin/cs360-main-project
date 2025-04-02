@@ -129,6 +129,18 @@
                         Products Available for Trading
                     </h3>
 
+                    @if(!Auth::user()->partner_id)
+                        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-md shadow-sm mb-6 relative flex items-center" role="alert">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            <div>
+                                <p class="font-medium">Partner Required</p>
+                                <p class="text-sm">You need to set a partner in your profile before you can initiate a four-party trade. <a href="{{ route('profile') }}" class="text-red-800 underline font-medium">Go to Profile Settings</a></p>
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
                         <table class="min-w-full table-auto border-collapse text-sm">
                             <thead>
@@ -148,21 +160,35 @@
                                         <td class="px-3 py-2 border-b border-gray-200 text-green-700 font-medium">${{ number_format($item->product->value, 2) }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200">{{ $item->quantity }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200">
-                                            <button 
-                                                type="button" 
-                                                class="px-3 py-1 text-sm bg-green-700 text-white rounded-md hover:bg-green-800 flex items-center shadow-sm transition-all duration-200 hover:shadow open-trade-modal"
-                                                data-product-id="{{ $item->product->id }}"
-                                                data-product-name="{{ $item->product->name }}"
-                                                data-product-quantity="{{ $item->quantity }}"
-                                                data-product-value="{{ $item->product->value }}"
-                                                data-owner-id="{{ $item->user->id }}"
-                                                data-owner-name="{{ $item->user->name }}"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
-                                                </svg>
-                                                Initiate Trade
-                                            </button>
+                                            @if(Auth::user()->partner_id)
+                                                <button 
+                                                    type="button" 
+                                                    class="px-3 py-1 text-sm bg-green-700 text-white rounded-md hover:bg-green-800 flex items-center shadow-sm transition-all duration-200 hover:shadow open-trade-modal"
+                                                    data-product-id="{{ $item->product->id }}"
+                                                    data-product-name="{{ $item->product->name }}"
+                                                    data-product-quantity="{{ $item->quantity }}"
+                                                    data-product-value="{{ $item->product->value }}"
+                                                    data-owner-id="{{ $item->user->id }}"
+                                                    data-owner-name="{{ $item->user->name }}"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                                                    </svg>
+                                                    Initiate Trade
+                                                </button>
+                                            @else
+                                                <button 
+                                                    type="button" 
+                                                    class="px-3 py-1 text-sm bg-gray-400 text-white rounded-md flex items-center shadow-sm cursor-not-allowed"
+                                                    title="You need to set a partner in your profile first"
+                                                    disabled
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                                                    </svg>
+                                                    Initiate Trade
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -190,7 +216,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
                     </svg>
-                    Initiate Trade
+                    Four-Party Barter Exchange
                 </h3>
                 <button type="button" class="text-gray-500 hover:text-gray-700 close-modal transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -204,8 +230,9 @@
                 <input type="hidden" name="productp_id" id="productp_id">
                 <input type="hidden" name="counterparty_id" id="counterparty_id">
                 
+                <!-- Desired Product Section -->
                 <div class="mb-5 bg-green-50 rounded-lg p-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Product You Want From <span id="ownerName" class="text-green-700"></span>:</label>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Product You Want (Role A):</label>
                     <div class="flex items-center">
                         <p id="requestedProductName" class="font-semibold text-green-800"></p>
                     </div>
@@ -219,19 +246,48 @@
                     </div>
                 </div>
                 
-                <div class="mb-5">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Product You're Offering:</label>
-                    <select name="producte_id" id="producte_id" class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
-                        <option value="">-- Select a product --</option>
-                        @foreach($userInventory as $item)
-                            <option value="{{ $item->product->id }}" data-quantity="{{ $item->quantity }}" data-value="{{ $item->product->value }}">
-                                {{ $item->product->name }} (Qty: {{ $item->quantity }}, Value: ${{ number_format($item->product->value, 2) }})
-                            </option>
-                        @endforeach
-                    </select>
+                <!-- Your Partner (B) Section -->
+                <div class="mb-5 bg-blue-50 rounded-lg p-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Your Partner (Role B):</label>
+                    <p class="font-semibold text-green-800">{{ Auth::user()->partner ? Auth::user()->partner->name : 'No partner set' }}</p>
+                    
+                    <div class="mt-3">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Product Your Partner Can Offer:</label>
+                        <select name="producte_id" id="producte_id" class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm required">
+                            <option value="">-- Select a product --</option>
+                            @if(Auth::user()->partner)
+                                @foreach($partnerProducts as $item)
+                                    <option value="{{ $item->product->id }}" data-quantity="{{ $item->quantity }}" data-value="{{ $item->product->value }}">
+                                        {{ $item->product->name }} (Qty: {{ $item->quantity }}, Value: ${{ number_format($item->product->value, 2) }})
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                        <div class="text-xs text-red-500 mt-1 hidden" id="partnerProductRequiredMessage">
+                            A product from your partner is required
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <label for="quantity_e" class="block text-gray-700 text-sm font-bold mb-2">Quantity Your Partner Will Provide:</label>
+                        <input type="number" name="quantity_e" id="quantity_e" min="1" value="1" class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                        <p class="text-xs text-gray-500 mt-1">This will be automatically calculated based on the equivalence table.</p>
+                    </div>
                 </div>
                 
-                <div class="mb-5 bg-yellow-50 rounded-lg p-4" id="equivalenceCalculation" style="display: none;">
+                <!-- Counterparty Information (X and Y) -->
+                <div class="mb-5 bg-yellow-50 rounded-lg p-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Counterparty (Role X):</label>
+                    <p id="ownerName" class="font-semibold text-green-800"></p>
+                    
+                    <div class="mt-3">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Counterparty's Partner (Role Y):</label>
+                        <p class="text-xs text-gray-500">The counterparty will select their partner who will receive your partner's product.</p>
+                    </div>
+                </div>
+                
+                <!-- Equivalence Calculation Section -->
+                <div class="mb-5 bg-gray-50 rounded-lg p-4" id="equivalenceCalculation" style="display: none;">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Trade Calculation:</label>
                     <div class="text-sm">
                         <div class="flex justify-between mb-1">
@@ -239,7 +295,7 @@
                             <span>$<span id="calc_product_p_value">0.00</span> × <span id="calc_quantity_p">0</span> = $<span id="calc_total_p_value">0.00</span></span>
                         </div>
                         <div class="flex justify-between mb-1">
-                            <span>Your Product Value:</span>
+                            <span>Partner's Product Value:</span>
                             <span>$<span id="calc_product_e_value">0.00</span> × <span id="calc_quantity_e">0</span> = $<span id="calc_total_e_value">0.00</span></span>
                         </div>
                         <div class="flex justify-between mb-1 text-xs text-gray-500">
@@ -257,18 +313,12 @@
                     </div>
                 </div>
                 
-                <div class="mb-5">
-                    <label for="quantity_e" class="block text-gray-700 text-sm font-bold mb-2">Quantity You're Offering:</label>
-                    <input type="number" name="quantity_e" id="quantity_e" min="1" value="1" class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
-                    <p class="text-xs text-gray-500 mt-1">This will be automatically calculated based on the equivalence table when you select a product.</p>
-                </div>
-                
                 <div class="flex justify-end space-x-3">
                     <button type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md close-modal hover:bg-gray-300 transition-colors duration-200">
                         Cancel
                     </button>
-                    <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800 transition-colors duration-200">
-                        Initiate Trade
+                    <button type="submit" id="initiateTradeButton" class="px-4 py-2 bg-gray-400 text-white rounded-md cursor-not-allowed transition-colors duration-200" disabled>
+                        Initiate Four-Party Trade
                     </button>
                 </div>
             </form>
@@ -281,6 +331,55 @@
             // Trade modal functionality
             const tradeModal = document.getElementById('tradeModal');
             const tradeButtons = document.querySelectorAll('.open-trade-modal');
+            const initiateButton = document.getElementById('initiateTradeButton');
+            const productESelect = document.getElementById('producte_id');
+            const partnerProductRequiredMessage = document.getElementById('partnerProductRequiredMessage');
+            
+            // Validate form and update button state
+            function validateTradeForm() {
+                const productId = productESelect.value;
+                
+                if (!productId) {
+                    partnerProductRequiredMessage.classList.remove('hidden');
+                    initiateButton.disabled = true;
+                    initiateButton.classList.remove('bg-green-700', 'hover:bg-green-800');
+                    initiateButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                    return false;
+                } else {
+                    partnerProductRequiredMessage.classList.add('hidden');
+                    initiateButton.disabled = false;
+                    initiateButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                    initiateButton.classList.add('bg-green-700', 'hover:bg-green-800');
+                    return true;
+                }
+            }
+            
+            // Call validation on product selection change
+            productESelect.addEventListener('change', validateTradeForm);
+            
+            // Form submission validation
+            document.getElementById('tradeForm').addEventListener('submit', function(event) {
+                if (!validateTradeForm()) {
+                    event.preventDefault();
+                    return false;
+                }
+                
+                // Add partner_b_id to the form submission (hidden input)
+                const partnerId = {{ Auth::user()->partner_id ?? 'null' }};
+                if (partnerId) {
+                    // Create a hidden field with the partner's ID if it doesn't exist
+                    if (!document.getElementById('partner_b')) {
+                        const partnerInput = document.createElement('input');
+                        partnerInput.type = 'hidden';
+                        partnerInput.name = 'partner_b';
+                        partnerInput.id = 'partner_b';
+                        partnerInput.value = partnerId;
+                        this.appendChild(partnerInput);
+                    }
+                }
+                
+                return true;
+            });
             
             tradeButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -304,13 +403,15 @@
                     document.getElementById('quantity_e').value = 1;
                     document.getElementById('equivalenceCalculation').style.display = 'none';
                     
+                    // Reset validation UI
+                    validateTradeForm();
+                    
                     tradeModal.classList.remove('hidden');
                 });
             });
             
             // Calculate equivalence when product and quantity change
             const productPQuantity = document.getElementById('quantity_p');
-            const productESelect = document.getElementById('producte_id');
             const productEQuantity = document.getElementById('quantity_e');
             
             function calculateEquivalence() {
@@ -353,6 +454,9 @@
                         
                         // Show the calculation
                         document.getElementById('equivalenceCalculation').style.display = 'block';
+                        
+                        // Re-validate form
+                        validateTradeForm();
                     })
                     .catch(error => {
                         console.error('Error calculating equivalence:', error);
@@ -371,6 +475,9 @@
                     });
                 });
             });
+            
+            // Initial validation
+            validateTradeForm();
         });
     </script>
 
