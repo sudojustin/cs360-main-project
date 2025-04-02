@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
         DB::table('users')->truncate();
         DB::table('products')->truncate();
         DB::table('transactions')->truncate();
+        DB::table('user_products')->truncate();
+        DB::table('equivalences')->truncate();
 
         User::factory()->create([
             'name' => 'test',
@@ -58,6 +60,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ProductSeeder::class,
+            EquivalenceSeeder::class,
+            UserProductSeeder::class,
             TransactionSeeder::class,
         ]);
     }

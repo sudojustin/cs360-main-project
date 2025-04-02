@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\UserProduct;
 
 class DashboardController extends Controller
 {
@@ -16,7 +17,15 @@ class DashboardController extends Controller
     */
     public function index()
     {
-        // Fetch all products and transactions from the database
+        // Fetch all products for dropdown
+        $allProducts = Product::all();
+        
+        // Fetch the user's inventory
+        $userInventory = UserProduct::with('product')
+            ->where('user_id', Auth::id())
+            ->get();
+
+        // Fetch user-owned products for backward compatibility
         $products = Product::where('owner_id', Auth::id())->get();
 
         // Fetch transactions where the user is involved in any capacity
@@ -30,34 +39,62 @@ class DashboardController extends Controller
             ->get();
 
         // Pass the products to the view
-        return view('dashboard', compact('products', 'transactions'));
+        return view('dashboard', compact('allProducts', 'userInventory', 'products', 'transactions'));
     }
 
-    public function storeProduct(Request $request)
+    /**
+     * Add a product to user inventory or update its quantity
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateInventory(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'value' => 'required|numeric|min:0',
+            'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1'
         ]);
 
-        Product::create([
-            'owner_id' => Auth::id(),
-            'name' => $request->name,
-            'value' => $request->value,
-            'quantity' => $request->quantity,
-        ]);
+        // Check if the user already has this product in inventory
+        $userProduct = UserProduct::where('user_id', Auth::id())
+            ->where('product_id', $request->product_id)
+            ->first();
 
-        return redirect()->route('dashboard')->with('success', 'Product added successfully!');
-    }
-
-    public function deleteProduct(Product $product)
-    {
-        if ($product->owner_id !== Auth::id()) {
-            return redirect()->route('dashboard')->with('error', 'Unauthorized to delete this product.');
+        if ($userProduct) {
+            // Update existing product quantity
+            $userProduct->quantity = $request->quantity;
+            $userProduct->save();
+            $message = 'Product quantity updated successfully!';
+        } else {
+            // Add new product to inventory
+            UserProduct::create([
+                'user_id' => Auth::id(),
+                'product_id' => $request->product_id,
+                'quantity' => $request->quantity
+            ]);
+            $message = 'Product added to your inventory successfully!';
         }
 
-        $product->delete();
-        return redirect()->route('dashboard')->with('sucess', 'Product deleted successfully!');
+        return redirect()->route('dashboard')->with('success', $message);
+    }
+
+    /**
+     * Remove a product from user inventory
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function removeFromInventory($id)
+    {
+        $userProduct = UserProduct::where('user_id', Auth::id())
+            ->where('id', $id)
+            ->first();
+
+        if (!$userProduct) {
+            return redirect()->route('dashboard')->with('error', 'Product not found in your inventory.');
+        }
+
+        $userProduct->delete();
+        return redirect()->route('dashboard')->with('success', 'Product removed from your inventory successfully!');
     }
 }

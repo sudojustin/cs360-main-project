@@ -14,11 +14,11 @@ class Product extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'id',   // Unique product identifier
-        'owner_id',     // ID of the user who owns the product
+        'id',           // Unique product identifier
+        'owner_id',     // ID of the user who owns the product (can be null now)
         'name',         // Name of the product
         'value',        // Value of the product
-        'quantity',     // Quantity available for barter 
+        'quantity',     // Quantity available for barter (legacy field)
     ];
 
     public function transactions()
@@ -26,9 +26,29 @@ class Product extends Model
         return $this->hasMany(Transaction::class, 'productp_id')->orWhere('producte_id', $this->id);
     }
 
-    // Relationship with User - a product belongs to a user
+    /**
+     * Get the owner of the product (legacy relationship).
+     */
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
+
+    /**
+     * Get all entries in user_products for this product.
+     */
+    public function userProducts()
+    {
+        return $this->hasMany(UserProduct::class);
+    }
+
+    /**
+     * Get all users who have this product through the UserProduct relationship.
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_products')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 }

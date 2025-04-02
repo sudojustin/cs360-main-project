@@ -28,6 +28,18 @@ Design an anonymous barter database for two pairs of people to exchange goods of
 10. If concatenated code is valid, database sends P to A and E to Y
 11. Transaction costs are applied to both sides
 
+## Updated Requirements
+
+### Product Management
+- All products in the database will be predefined with a specific value
+- Products will not have a quantity assigned initially
+- Users will not set the values of products; they will only specify how much of a product they have
+
+### Trade Process
+- When initiating a trade, users will specify how much of a product they want
+- The system will automatically calculate how much of their product they need to offer based on the equivalence table
+- The equivalence calculation ensures trades are of equal value
+
 ## Deliverables
 
 1. **Database Design**

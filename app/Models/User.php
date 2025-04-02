@@ -59,9 +59,30 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'partner_id');
     }
 
+    /**
+     * Get products directly owned by the user (legacy relationship).
+     */
     public function products()
     {
         return $this->hasMany(Product::class, 'owner_id');
+    }
+
+    /**
+     * Get products owned by the user with quantities through the UserProduct model.
+     */
+    public function userProducts()
+    {
+        return $this->hasMany(UserProduct::class);
+    }
+
+    /**
+     * Get all products through the UserProduct relationship.
+     */
+    public function inventory()
+    {
+        return $this->belongsToMany(Product::class, 'user_products')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 
     public function transactionsAsInitiator()
