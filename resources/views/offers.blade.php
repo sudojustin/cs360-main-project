@@ -257,11 +257,22 @@
                     <select name="user_product_id" id="user_product_id" 
                         class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 transition-colors duration-200" required>
                         <option value="">-- Select Your Product --</option>
-                        @foreach($userProducts as $userProduct)
-                            <option value="{{ $userProduct->id }}" data-quantity="{{ $userProduct->quantity }}" data-value="{{ $userProduct->value }}">
-                                {{ $userProduct->name }} (Qty: {{ $userProduct->quantity }}, Value: ${{ number_format($userProduct->value, 2) }})
-                            </option>
-                        @endforeach
+                        <optgroup label="Your Products">
+                            @foreach($userProducts as $userProduct)
+                                <option value="{{ $userProduct->id }}" data-quantity="{{ $userProduct->quantity }}" data-value="{{ $userProduct->value }}" data-owner="self">
+                                    {{ $userProduct->name }} (Qty: {{ $userProduct->quantity }}, Value: ${{ number_format($userProduct->value, 2) }})
+                                </option>
+                            @endforeach
+                        </optgroup>
+                        @if(auth()->user()->partner)
+                            <optgroup label="Your Partner's Products">
+                                @foreach(auth()->user()->partner->products as $partnerProduct)
+                                    <option value="{{ $partnerProduct->id }}" data-quantity="{{ $partnerProduct->quantity }}" data-value="{{ $partnerProduct->value }}" data-owner="partner">
+                                        {{ $partnerProduct->name }} (Qty: {{ $partnerProduct->quantity }}, Value: ${{ number_format($partnerProduct->value, 2) }})
+                                    </option>
+                                @endforeach
+                            </optgroup>
+                        @endif
                     </select>
                 </div>
                 
@@ -370,7 +381,7 @@
                 
                 if (parseInt(this.value) > availableQuantity) {
                     this.value = availableQuantity;
-                    alert('You cannot offer more than you have available.');
+                    alert('You cannot offer more than the available quantity.');
                 }
             }
         });
@@ -379,11 +390,43 @@
             if (this.value) {
                 const selectedOption = this.options[this.selectedIndex];
                 const availableQuantity = parseInt(selectedOption.getAttribute('data-quantity'));
+                const owner = selectedOption.getAttribute('data-owner');
                 
-                if (parseInt(offerQuantityInput.value) > availableQuantity) {
-                    offerQuantityInput.value = availableQuantity;
-                }
+                // Reset offer quantity to 1 when changing products
+                offerQuantityInput.value = 1;
+                
+                // Update the form action to include the owner information
+                const formAction = tradeForm.action;
+                const baseUrl = formAction.split('/').slice(0, -1).join('/');
+                tradeForm.action = `${baseUrl}/${this.value}?owner=${owner}`;
             }
+        });
+
+        // Form submission validation
+        tradeForm.addEventListener('submit', function(e) {
+            if (!userProductSelect.value) {
+                e.preventDefault();
+                alert('Please select a product to offer.');
+                return;
+            }
+
+            const selectedOption = userProductSelect.options[userProductSelect.selectedIndex];
+            const owner = selectedOption.getAttribute('data-owner');
+            const availableQuantity = parseInt(selectedOption.getAttribute('data-quantity'));
+            const requestedQuantity = parseInt(offerQuantityInput.value);
+
+            if (requestedQuantity > availableQuantity) {
+                e.preventDefault();
+                alert('You cannot offer more than the available quantity.');
+                return;
+            }
+
+            // Add owner information to the form data
+            const ownerInput = document.createElement('input');
+            ownerInput.type = 'hidden';
+            ownerInput.name = 'product_owner';
+            ownerInput.value = owner;
+            this.appendChild(ownerInput);
         });
     });
     </script>

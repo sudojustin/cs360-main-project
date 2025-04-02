@@ -19,8 +19,15 @@ class DashboardController extends Controller
         // Fetch all products and transactions from the database
         $products = Product::where('owner_id', Auth::id())->get();
 
-        // Fetch all user's ongoing barter transactions
-        $transactions = Transaction::with(['productp', 'producte', 'counterparty'])->get();
+        // Fetch transactions where the user is involved in any capacity
+        $transactions = Transaction::with(['productp', 'producte', 'counterparty', 'initiator', 'partnerInitiator', 'partnerCounterparty'])
+            ->where(function($query) {
+                $query->where('initiator_id', Auth::id())
+                    ->orWhere('counterparty_id', Auth::id())
+                    ->orWhere('partner_initiator_id', Auth::id())
+                    ->orWhere('partner_counterparty_id', Auth::id());
+            })
+            ->get();
 
         // Pass the products to the view
         return view('dashboard', compact('products', 'transactions'));

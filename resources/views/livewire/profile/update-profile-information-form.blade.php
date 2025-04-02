@@ -49,8 +49,35 @@ new class extends Component
             $user->email_verified_at = null;
         }
 
-        // Save the user and partner relationship
-        $user->partner_id = $this->partner_id;
+        // Handle partner relationship updates
+        if ($this->partner_id !== $user->partner_id) {
+            // If there was a previous partner, remove the partnership
+            if ($user->partner_id) {
+                $previousPartner = User::find($user->partner_id);
+                if ($previousPartner) {
+                    $previousPartner->partner_id = null;
+                    $previousPartner->save();
+                }
+            }
+
+            // If there's a new partner, update both users
+            if ($this->partner_id) {
+                $newPartner = User::find($this->partner_id);
+                if ($newPartner) {
+                    // First update the new partner's partner_id
+                    $newPartner->partner_id = $user->id;
+                    $newPartner->save();
+                    
+                    // Then update the current user's partner_id
+                    $user->partner_id = $this->partner_id;
+                    $user->save();
+                    
+                    return; // Exit early since we've already saved both users
+                }
+            }
+        }
+
+        // Save the user's information if no partner changes were made
         $user->save();
 
         $this->dispatch('profile-updated', name: $user->name);

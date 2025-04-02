@@ -23,24 +23,24 @@
                         <table class="table-auto w-full">
                             <thead>
                                 <tr class="bg-green-50 text-green-800 uppercase text-xs">
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider rounded-tl-lg">Product Name</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">Value</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">Quantity</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider rounded-tl-lg">Product Name</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Value</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Quantity</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($products as $product)
                                     <tr class="hover:bg-green-50 transition-colors duration-150 ease-in-out">
-                                        <td class="border-b border-gray-200 px-4 py-3 font-medium text-gray-700">{{ $product->name }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3 text-green-700 font-medium">${{ $product->value }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $product->quantity }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">
+                                        <td class="border-b border-gray-200 px-3 py-2.5 font-medium text-gray-700">{{ $product->name }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5 text-green-700 font-medium">${{ $product->value }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $product->quantity }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">
                                             <!-- Delete Product -->
                                             <form action="{{ route('dashboard.product.delete', $product->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-2 px-4 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow">
+                                                <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-1.5 px-3 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-sm">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                                     </svg>
@@ -62,45 +62,8 @@
                         </svg>
                         Add Product
                     </button>
-
-                    <!-- Add Product Modal -->
-                    <div id="addProductModal" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-60 z-50 backdrop-blur-sm transition-all duration-300">
-                        <div class="bg-white p-6 rounded-lg shadow-2xl border-l-4 border-green-700 max-w-md w-full transform transition-all duration-300 ease-out">
-                            <h3 class="text-lg font-semibold mb-4 flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                                Add Product
-                            </h3>
-                            <form action="{{ route('dashboard.product.store') }}" method="POST">
-                                @csrf
-                                <div class="mb-4">
-                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                                    <input type="text" name="name" id="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 transition-colors duration-200">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="value" class="block text-sm font-medium text-gray-700 mb-1">Value</label>
-                                    <div class="mt-1 relative rounded-md shadow-sm">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <span class="text-gray-500 sm:text-sm">$</span>
-                                        </div>
-                                        <input type="number" name="value" id="value" required class="block w-full pl-7 border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 transition-colors duration-200">
-                                    </div>
-                                </div>
-                                <div class="mb-6">
-                                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                                    <input type="number" name="quantity" id="quantity" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 transition-colors duration-200">
-                                </div>
-                                <div class="flex justify-end space-x-3">
-                                    <button type="button" onclick="document.getElementById('addProductModal').style.display='none'" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">Cancel</button>
-                                    <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800 shadow-sm hover:shadow transition-all duration-200">Add Product</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 </div>
             </div>
-
 
             <!-- Transactions Section -->
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-green-700 transform transition-all hover:shadow-xl">
@@ -112,39 +75,39 @@
                         Your Transactions
                     </h3>
                     <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
-                        <table class="table-auto w-full text-sm">
+                        <table class="table-auto w-full">
                             <thead>
-                                <tr class="bg-green-50 uppercase text-xs">
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">ID</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Initiator</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Counterparty</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Partner Initiator</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Partner Counterparty</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Product Provided</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Product Exchanged</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Hash Key</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Fee Total</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Created At</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Completed At</th>
-                                    <th class="px-2 py-3 text-left font-medium text-green-800 tracking-wider">Status</th>
+                                <tr class="bg-green-50 text-green-800 uppercase text-xs">
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Initiator</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Counterparty</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Partner Initiator</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Partner Counterparty</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product Provided</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Product Exchanged</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Hash Key</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Fee Total</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Created At</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider">Completed At</th>
+                                    <th class="px-3 py-2.5 text-left font-medium tracking-wider rounded-tr-lg">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($transactions as $transaction)
                                     <tr class="hover:bg-green-50 transition-colors duration-150 ease-in-out">
-                                        <td class="border-b border-gray-200 px-2 py-3 font-medium text-gray-700">{{ $transaction->transaction_id }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3">{{ $transaction->initiator ? $transaction->initiator->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3">{{ $transaction->counterparty ? $transaction->counterparty->name : 'Waiting' }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3">{{ $transaction->partnerInitiator ? $transaction->partnerInitiator->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3 font-mono text-xs">{{ $transaction->hashkey }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3 font-medium text-green-700">${{ $transaction->transaction_fee_total }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3 text-xs">{{ $transaction->created_at }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3 text-xs">{{ $transaction->completed_at ?: 'Pending' }}</td>
-                                        <td class="border-b border-gray-200 px-2 py-3">
-                                            <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                                        <td class="border-b border-gray-200 px-3 py-2.5 font-medium text-gray-700">{{ $transaction->transaction_id }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->initiator ? $transaction->initiator->name : 'N/A' }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->counterparty ? $transaction->counterparty->name : 'Waiting' }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->partnerInitiator ? $transaction->partnerInitiator->name : 'N/A' }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5 font-mono text-xs">{{ $transaction->hashkey }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5 font-medium text-green-700">${{ $transaction->transaction_fee_total }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5 text-xs">{{ $transaction->created_at }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5 text-xs">{{ $transaction->completed_at ?: 'Pending' }}</td>
+                                        <td class="border-b border-gray-200 px-3 py-2.5">
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold 
                                                 @if($transaction->status == 'COMPLETE') bg-green-100 text-green-800 
                                                 @elseif($transaction->status == 'PENDING') bg-blue-100 text-blue-800
                                                 @elseif($transaction->status == 'INITIATED') bg-yellow-100 text-yellow-800
@@ -159,6 +122,42 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-60 z-50 backdrop-blur-sm transition-all duration-300">
+        <div class="bg-white p-4 rounded-lg shadow-2xl border-l-4 border-green-700 w-[90%] max-w-md transform transition-all duration-300 ease-out">
+            <h3 class="text-lg font-semibold mb-3 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Add Product
+            </h3>
+            <form action="{{ route('dashboard.product.store') }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-0.5">Product Name</label>
+                    <input type="text" name="name" id="name" required class="mt-0.5 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 transition-colors duration-200">
+                </div>
+                <div class="mb-3">
+                    <label for="value" class="block text-sm font-medium text-gray-700 mb-0.5">Value</label>
+                    <div class="mt-0.5 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">$</span>
+                        </div>
+                        <input type="number" name="value" id="value" required class="block w-full pl-7 border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 transition-colors duration-200">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-0.5">Quantity</label>
+                    <input type="number" name="quantity" id="quantity" required class="mt-0.5 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 transition-colors duration-200">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="document.getElementById('addProductModal').style.display='none'" class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">Cancel</button>
+                    <button type="submit" class="px-3 py-1.5 bg-green-700 text-white rounded-md hover:bg-green-800 shadow-sm hover:shadow transition-all duration-200">Add Product</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -203,6 +202,15 @@
         input:focus, button:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.3);
+        }
+
+        /* Ensure modal is fully visible */
+        #addProductModal {
+            padding: 0.5rem;
+        }
+
+        #addProductModal > div {
+            margin: auto;
         }
     </style>
 </x-app-layout>

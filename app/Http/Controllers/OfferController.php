@@ -38,6 +38,7 @@ class OfferController extends Controller
             'user_product_id' => 'required|exists:products,id',
             'offer_quantity' => 'required|integer|min:1',
             'request_quantity' => 'required|integer|min:1',
+            'product_owner' => 'required|in:self,partner',
         ]);
 
         $initiator_id = auth()->id();
@@ -51,9 +52,17 @@ class OfferController extends Controller
         // Get the user's selected product to offer in the trade
         $userProduct = Product::findOrFail($request->user_product_id);
         
-        // Verify that the user actually owns this product
-        if ($userProduct->owner_id !== $initiator_id) {
-            return redirect()->route('offers')->with('error', 'You can only trade products that you own.');
+        // Verify product ownership based on the owner parameter
+        if ($request->product_owner === 'self') {
+            if ($userProduct->owner_id !== $initiator_id) {
+                return redirect()->route('offers')->with('error', 'You can only trade products that you own.');
+            }
+        } else {
+            // Check if the product belongs to the user's partner
+            $user = auth()->user();
+            if (!$user->partner || $userProduct->owner_id !== $user->partner->id) {
+                return redirect()->route('offers')->with('error', 'This product does not belong to your partner.');
+            }
         }
         
         // Check if the requested quantities are available
@@ -76,21 +85,17 @@ class OfferController extends Controller
         }
 
         // Create a new transaction for the trade
-        $transaction = new Transaction([
+        $transaction = Transaction::create([
             'initiator_id' => $initiator_id,
             'counterparty_id' => $counterparty_id,
-            'productp_id' => $userProduct->id,        // The product the user is offering
-            'producte_id' => $product->id,            // The product the user wants in return
-            'hashkey' => bin2hex(random_bytes(8)),    // Generate a secure 16-digit hash
-            'transaction_fee_total' => 0,             // Fee calculation could be added later
-            'status' => 'Pending',                    // The trade is pending until accepted by the counterparty
+            'productp_id' => $product->id,
+            'producte_id' => $userProduct->id,
+            'hashkey' => bin2hex(random_bytes(8)),
+            'transaction_fee_total' => 0,
+            'status' => 'Pending',
         ]);
-        
-        $transaction->created_at = now();
-        $transaction->save();
 
-        // For now, redirect with a success message
-        return redirect()->route('offers')->with('success', 'Trade initiated successfully. Waiting for the counterparty to accept or reject.');
+        return redirect()->route('offers')->with('success', 'Trade offer sent successfully!');
     }
 
     public function acceptTrade(Transaction $transaction)
