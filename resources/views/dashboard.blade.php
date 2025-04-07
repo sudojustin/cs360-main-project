@@ -4,12 +4,60 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-green-700" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z" />
             </svg>
-            {{ __('BarterDB Exchange') }}
+            {{ __('BarterDB') }}
         </h2>
     </x-slot>
 
     <div class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-green-700 to-green-900 rounded-xl shadow-xl overflow-hidden">
+                <div class="relative">
+                    <!-- Decorative elements -->
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-green-500 rounded-full opacity-20"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-green-400 rounded-full opacity-20"></div>
+                    
+                    <div class="relative px-6 py-5 sm:px-8 sm:py-6">
+                        <div class="flex flex-col md:flex-row items-center justify-between">
+                            <div class="mb-4 md:mb-0 md:mr-8">
+                                <h1 class="text-2xl font-bold text-white mb-1">Welcome to BarterDB Exchange</h1>
+                                <p class="text-green-100 text-base max-w-2xl">Your secure four-party trading platform for anonymous bartering with escrow protection.</p>
+                            </div>
+                            
+                            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                                <div class="bg-white bg-opacity-20 rounded-lg p-3 text-center">
+                                    <div class="text-xl font-bold text-white">{{ $userInventory->sum('quantity') }}</div>
+                                    <div class="text-green-100 text-xs">Items in Inventory</div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 rounded-lg p-3 text-center">
+                                    <div class="text-xl font-bold text-white">{{ $transactions->where('status', 'Pending')->count() }}</div>
+                                    <div class="text-green-100 text-xs">Pending Trades</div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 rounded-lg p-3 text-center">
+                                    <div class="text-xl font-bold text-white">{{ $transactions->where('status', 'Completed')->count() }}</div>
+                                    <div class="text-green-100 text-xs">Completed Trades</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <a href="{{ route('offers') }}" class="inline-flex items-center px-3 py-1.5 bg-white text-green-700 rounded-md hover:bg-green-50 transition-colors duration-200 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                                </svg>
+                                Browse Offers
+                            </a>
+                            <a href="{{ route('profile') }}" class="inline-flex items-center px-3 py-1.5 bg-green-800 text-white rounded-md hover:bg-green-700 transition-colors duration-200 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                </svg>
+                                Update Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Messages Section -->
             @if(session('success'))
                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-md shadow-sm mb-6 relative flex items-center" role="alert">

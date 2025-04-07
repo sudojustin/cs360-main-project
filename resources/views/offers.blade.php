@@ -10,6 +10,54 @@
 
     <div class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-green-700 to-green-900 rounded-xl shadow-xl overflow-hidden mb-6">
+                <div class="relative">
+                    <!-- Decorative elements -->
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-green-500 rounded-full opacity-20"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-green-400 rounded-full opacity-20"></div>
+                    
+                    <div class="relative px-6 py-5 sm:px-8 sm:py-6">
+                        <div class="flex flex-col md:flex-row items-center justify-between">
+                            <div class="mb-4 md:mb-0 md:mr-8">
+                                <h1 class="text-2xl font-bold text-white mb-1">Barter Marketplace</h1>
+                                <p class="text-green-100 text-base max-w-2xl">Browse available products and initiate secure four-party trades with escrow protection.</p>
+                            </div>
+                            
+                            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                                <div class="bg-white bg-opacity-20 rounded-lg p-3 text-center">
+                                    <div class="text-xl font-bold text-white">{{ $otherUserProducts->count() }}</div>
+                                    <div class="text-green-100 text-xs">Available Products</div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 rounded-lg p-3 text-center">
+                                    <div class="text-xl font-bold text-white">{{ isset($pendingTrades) ? $pendingTrades->count() : 0 }}</div>
+                                    <div class="text-green-100 text-xs">Pending Trades</div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 rounded-lg p-3 text-center">
+                                    <div class="text-xl font-bold text-white">4-Party</div>
+                                    <div class="text-green-100 text-xs">Secure Trading</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-3 py-1.5 bg-white text-green-700 rounded-md hover:bg-green-50 transition-colors duration-200 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                                </svg>
+                                Back to Dashboard
+                            </a>
+                            <a href="{{ route('profile') }}" class="inline-flex items-center px-3 py-1.5 bg-green-800 text-white rounded-md hover:bg-green-700 transition-colors duration-200 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                </svg>
+                                Update Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Messages Section -->
             @if(session('success'))
                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-md shadow-sm mb-6 relative flex items-center" role="alert">
