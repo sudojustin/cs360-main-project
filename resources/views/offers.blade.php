@@ -189,6 +189,18 @@
                         </div>
                     @endif
 
+                    <!-- Search Products -->
+                    <div class="mb-4">
+                        <div class="relative">
+                            <input type="text" id="productSearch" placeholder="Search products..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
                         <table class="min-w-full table-auto border-collapse text-sm">
                             <thead>
@@ -567,4 +579,57 @@
         box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
     }
     </style>
+
+    <!-- Product Search Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('productSearch');
+            const productRows = document.querySelectorAll('table tbody tr');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                productRows.forEach(row => {
+                    // Skip the "No products available" row if it exists
+                    if (row.cells.length === 1 && row.cells[0].getAttribute('colspan')) {
+                        return;
+                    }
+                    
+                    const productName = row.cells[0].textContent.toLowerCase();
+                    const ownerName = row.cells[1].textContent.toLowerCase();
+                    
+                    if (productName.includes(searchTerm) || ownerName.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Check if all rows are hidden (except the "No products" row)
+                let allHidden = true;
+                productRows.forEach(row => {
+                    if (row.style.display !== 'none' && !(row.cells.length === 1 && row.cells[0].getAttribute('colspan'))) {
+                        allHidden = false;
+                    }
+                });
+                
+                // Show "No results" message if needed
+                let noResultsRow = document.getElementById('noSearchResults');
+                if (allHidden && searchTerm !== '') {
+                    if (!noResultsRow) {
+                        noResultsRow = document.createElement('tr');
+                        noResultsRow.id = 'noSearchResults';
+                        const cell = document.createElement('td');
+                        cell.setAttribute('colspan', '5');
+                        cell.className = 'px-3 py-4 text-center text-gray-500 italic text-sm';
+                        cell.textContent = 'No products match your search.';
+                        noResultsRow.appendChild(cell);
+                        document.querySelector('table tbody').appendChild(noResultsRow);
+                    }
+                } else if (noResultsRow) {
+                    noResultsRow.remove();
+                }
+            });
+        });
+    </script>
 </x-app-layout>
