@@ -120,7 +120,7 @@
                                             $theirQuantity = $isInitiator ? $trade->quantity_offered : $trade->quantity_requested;
                                             $yourProduct = $isInitiator ? $trade->requestedProduct : $trade->offeredProduct;
                                             $yourQuantity = $isInitiator ? $trade->quantity_requested : $trade->quantity_offered;
-                                            $tradePartner = $isInitiator ? $trade->receiver->name : $trade->initiator->name;
+                                            $tradePartner = $trade->initiator->name;
                                         @endphp
                                         <tr class="hover:bg-stone-50 transition-colors duration-150 ease-in-out">
                                             <td class="px-3 py-2 border-b border-gray-200 font-medium">{{ $tradePartner }}</td>
