@@ -102,11 +102,11 @@
                         <table class="min-w-full table-auto border-collapse text-sm">
                             <thead>
                                 <tr class="bg-stone-50 text-stone-800 uppercase text-xs">
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">Trader</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">You Give</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Qty</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">You Receive</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Qty</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">Initiator</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Product (A→X)</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Quantity</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Product (X→A)</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Quantity</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Value</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
                                 </tr>
