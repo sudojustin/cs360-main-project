@@ -50,4 +50,21 @@ class AdminController extends Controller
         
         return back()->with('success', 'Transaction deleted successfully.');
     }
+
+    public function toggleUserApproval(User $user)
+    {
+        $user->update(['is_approved' => !$user->is_approved]);
+        
+        return back()->with('success', $user->is_approved 
+            ? "User {$user->name} has been approved." 
+            : "Approval for {$user->name} has been revoked.");
+    }
+
+    public function dashboard()
+    {
+        $users = User::all();
+        $transactions = Transaction::with(['sender', 'receiver'])->latest()->get();
+        
+        return view('admin-dashboard', compact('users', 'transactions'));
+    }
 }

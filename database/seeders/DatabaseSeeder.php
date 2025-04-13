@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'test',
             'email' => 'test@test',
             'password' => bcrypt('password'),
+            'is_approved' => true,
         ]);
 
         User::factory()->create([
@@ -32,30 +33,35 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin',
             'password' => bcrypt('password'),
             'is_admin' => true,
+            'is_approved' => true,
         ]);
 
         User::factory()->create([
             'name' => 'user1',
             'email' => 'user1@user1',
             'password' => bcrypt('password'),
+            'is_approved' => true,
         ]);
 
         User::factory()->create([
             'name' => 'user2',
             'email' => 'user2@user2',
             'password' => bcrypt('password'),
+            'is_approved' => true,
         ]);
 
         User::factory()->create([
             'name' => 'user3',
             'email' => 'user3@user3',
             'password' => bcrypt('password'),
+            'is_approved' => true,
         ]);
 
         User::factory()->create([
             'name' => 'user4',
             'email' => 'user4@user4',
             'password' => bcrypt('password'),
+            'is_approved' => true,
         ]);
 
         $this->call([

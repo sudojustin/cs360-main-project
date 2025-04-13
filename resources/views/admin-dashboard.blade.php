@@ -59,142 +59,24 @@
                 </div>
             </div>
 
-            <!-- Welcome Card -->
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-emerald-700 transform transition-all hover:shadow-xl">
-                <div class="p-6 text-gray-900 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+            <!-- Flash Messages -->
+            @if (session('success'))
+                <div class="mx-6 p-4 mb-4 bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 rounded-md shadow-sm flex items-center" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                     </svg>
-                    <span class="text-xl font-semibold">{{ __("Welcome to the Admin Dashboard!") }}</span>
+                    <span>{{ session('success') }}</span>
                 </div>
+            @endif
 
-                <!-- Flash Messages -->
-                @if (session('success'))
-                    <div class="mx-6 p-4 mb-4 bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 rounded-md shadow-sm flex items-center" role="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="mx-6 p-4 mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-md shadow-sm flex items-center" role="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('error') }}</span>
-                    </div>
-                @endif
-            </div>
-
-            <!-- User Table -->
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-emerald-700 transform transition-all hover:shadow-xl">
-                <div class="p-6 text-gray-900">
-                    <h3 class="font-semibold text-xl text-gray-900 flex items-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                        </svg>
-                        User List
-                    </h3>
-
-                    <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
-                        <table class="min-w-full table-auto border-collapse">
-                            <thead>
-                                <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Name</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Email</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Admin</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($users as $user)
-                                    <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
-                                        <td class="px-3 py-2 border-b border-gray-200 font-medium text-sm">{{ $user->id }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $user->name }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $user->email }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200">
-                                            @if($user->is_admin)
-                                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">Yes</span>
-                                            @else
-                                                <span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">No</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-3 py-2 border-b border-gray-200">
-                                            @if($user->id !== auth()->id())
-                                                <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                                        </svg>
-                                                        Delete
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <span class="text-gray-400 text-xs italic">Cannot delete yourself</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+            @if (session('error'))
+                <div class="mx-6 p-4 mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-md shadow-sm flex items-center" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <span>{{ session('error') }}</span>
                 </div>
-            </div>
-
-            <!-- Product Table -->
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-emerald-700 transform transition-all hover:shadow-xl">
-                <div class="p-6 text-gray-900">
-                    <h3 class="font-semibold text-xl text-gray-900 flex items-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" />
-                        </svg>
-                        Product List
-                    </h3>
-
-                    <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
-                        <table class="min-w-full table-auto border-collapse">
-                            <thead>
-                                <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Name</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Owner ID</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Value</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Quantity</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($products as $product)
-                                    <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
-                                        <td class="px-3 py-2 border-b border-gray-200 font-medium text-sm">{{ $product->id }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->name }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->owner_id }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200 text-stone-700 font-medium text-sm">${{ number_format($product->value, 2) }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->quantity }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200">
-                                            <form action="{{ route('admin.products.delete', $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                                    </svg>
-                                                    Delete
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            @endif
 
             <!-- Transaction Summary Card -->
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-emerald-700 transform transition-all hover:shadow-xl">
@@ -317,6 +199,132 @@
                                         <td class="px-3 py-2 border-b border-gray-200 text-xs text-gray-600">{{ $transaction->completed_at ?? 'Pending' }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200">
                                             <form action="{{ route('admin.transactions.delete', $transaction->transaction_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this transaction?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Section -->
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-emerald-700 transform transition-all hover:shadow-xl">
+                <div class="p-6 text-gray-900">
+                    <h3 class="font-semibold text-xl text-gray-900 flex items-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                        </svg>
+                        User Management
+                    </h3>
+
+                    <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
+                        <table class="min-w-full table-auto border-collapse">
+                            <thead>
+                                <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Name</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Email</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Admin</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Status</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($users as $user)
+                                    <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
+                                        <td class="px-3 py-2 border-b border-gray-200 font-medium text-sm">{{ $user->id }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $user->name }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $user->email }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200">
+                                            @if($user->is_admin)
+                                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">Yes</span>
+                                            @else
+                                                <span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">No</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-2 border-b border-gray-200">
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $user->is_approved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                {{ $user->is_approved ? 'Approved' : 'Pending' }}
+                                            </span>
+                                        </td>
+                                        <td class="px-3 py-2 border-b border-gray-200">
+                                            <div class="flex space-x-2">
+                                                @if(!$user->is_admin && !$user->is_approved)
+                                                    <form action="{{ route('admin.users.toggle-approval', $user) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" class="bg-white border border-green-500 text-green-600 hover:bg-green-50 font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            Approve
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                @if($user->id !== auth()->id())
+                                                    <form action="{{ route('admin.users.delete', $user) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Table -->
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-emerald-700 transform transition-all hover:shadow-xl">
+                <div class="p-6 text-gray-900">
+                    <h3 class="font-semibold text-xl text-gray-900 flex items-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" />
+                        </svg>
+                        Product List
+                    </h3>
+
+                    <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
+                        <table class="min-w-full table-auto border-collapse">
+                            <thead>
+                                <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Name</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Owner ID</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Value</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Quantity</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($products as $product)
+                                    <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
+                                        <td class="px-3 py-2 border-b border-gray-200 font-medium text-sm">{{ $product->id }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->name }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->owner_id }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-stone-700 font-medium text-sm">${{ number_format($product->value, 2) }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->quantity }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200">
+                                            <form action="{{ route('admin.products.delete', $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">

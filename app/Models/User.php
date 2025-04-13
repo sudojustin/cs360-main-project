@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'partner_id',
+        'is_approved',
     ];
 
     /**
@@ -46,6 +47,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_approved' => 'boolean',
         ];
     }
 
@@ -93,5 +95,10 @@ class User extends Authenticatable
     public function transactionsAsPartner()
     {
         return $this->hasMany(Transaction::class, 'partner_id');
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->is_approved ?? false;
     }
 }

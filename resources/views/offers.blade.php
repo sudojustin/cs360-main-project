@@ -88,134 +88,6 @@
                 </div>
             </div>
 
-            <!-- Pending Trades from Others Section -->
-            <div class="bg-white overflow-hidden shadow-md sm:rounded-lg border-l-4 border-stone-500 transition-all duration-300 hover:shadow-xl mb-6">
-                <div class="p-4 text-gray-900">
-                    <h3 class="font-semibold text-lg text-gray-900 flex items-center mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-stone-600" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-                        </svg>
-                        Your Pending Trades
-                    </h3>
-
-                    <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
-                        <table class="min-w-full table-auto border-collapse text-sm">
-                            <thead>
-                                <tr class="bg-stone-50 text-stone-800 uppercase text-xs">
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">Initiator</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Your Product</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Your Quantity</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Other Product</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Other Quantity</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Value</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if(isset($pendingTrades) && count($pendingTrades) > 0)
-                                    @foreach($pendingTrades as $trade)
-                                        @php
-                                            $isInitiator = $trade->initiator->id === Auth::id();
-                                            $isCounterparty = $trade->counterparty_id === Auth::id();
-                                            $isPartnerB = $trade->partner_b_id === Auth::id();
-                                            $isPartnerY = $trade->partner_y_id === Auth::id();
-                                            
-                                            // Determine user's role in the trade
-                                            $userRole = '';
-                                            if ($isInitiator) {
-                                                $userRole = $trade->initiator->name;
-                                            } elseif ($isCounterparty) {
-                                                $userRole = 'X (Counterparty)';
-                                            } elseif ($isPartnerB) {
-                                                $userRole = 'B (Partner of A)';
-                                            } elseif ($isPartnerY) {
-                                                $userRole = 'Y (Partner of X)';
-                                            }
-                                            
-                                            // Determine products and quantities based on user's role
-                                            if ($isInitiator) {
-                                                $yourProduct = $trade->requestedProduct;
-                                                $yourQuantity = $trade->quantity_requested;
-                                                $theirProduct = $trade->offeredProduct;
-                                                $theirQuantity = $trade->quantity_offered;
-                                            } elseif ($isCounterparty) {
-                                                $yourProduct = $trade->offeredProduct;
-                                                $yourQuantity = $trade->quantity_offered;
-                                                $theirProduct = $trade->requestedProduct;
-                                                $theirQuantity = $trade->quantity_requested;
-                                            } elseif ($isPartnerB) {
-                                                $yourProduct = $trade->offeredProduct;
-                                                $yourQuantity = $trade->quantity_offered;
-                                                $theirProduct = $trade->requestedProduct;
-                                                $theirQuantity = $trade->quantity_requested;
-                                            } elseif ($isPartnerY) {
-                                                $yourProduct = $trade->requestedProduct;
-                                                $yourQuantity = $trade->quantity_requested;
-                                                $theirProduct = $trade->offeredProduct;
-                                                $theirQuantity = $trade->quantity_offered;
-                                            }
-                                            
-                                            // Get other parties involved
-                                            $otherParties = [];
-                                            if (!$isInitiator) {
-                                                $otherParties[] = "A: " . $trade->initiator->name;
-                                            }
-                                            if (!$isCounterparty) {
-                                                $otherParties[] = "X: " . ($trade->counterparty ? "Counterparty" : 'N/A');
-                                            }
-                                            if (!$isPartnerB && $trade->partner_b_id) {
-                                                $otherParties[] = "B: " . ($trade->partnerB ? "Partner B" : 'N/A');
-                                            }
-                                            if (!$isPartnerY && $trade->partner_y_id) {
-                                                $otherParties[] = "Y: " . ($trade->partnerY ? "Partner Y" : 'N/A');
-                                            }
-                                        @endphp
-                                        <tr class="hover:bg-stone-50 transition-colors duration-150 ease-in-out">
-                                            <td class="px-3 py-2 border-b border-gray-200 font-medium">
-                                                {{ $trade->initiator->name }}
-                                            </td>
-                                            <td class="px-3 py-2 border-b border-gray-200">{{ $yourProduct->name }}</td>
-                                            <td class="px-3 py-2 border-b border-gray-200">{{ $yourQuantity }}</td>
-                                            <td class="px-3 py-2 border-b border-gray-200">{{ $theirProduct->name }}</td>
-                                            <td class="px-3 py-2 border-b border-gray-200">{{ $theirQuantity }}</td>
-                                            <td class="px-3 py-2 border-b border-gray-200 text-stone-700 font-medium">
-                                                ${{ number_format($theirProduct->value * $theirQuantity, 2) }}
-                                                <div class="text-xs text-gray-500">
-                                                    Status: {{ $trade->status }} | 
-                                                    Last action: {{ isset($trade->last_action_by) ? $trade->last_action_by : 'None' }}
-                                                </div>
-                                            </td>
-                                            <td class="px-3 py-2 border-b border-gray-200">
-                                                <div class="flex space-x-2">
-                                                    <form method="POST" action="{{ route('trade.accept', $trade->transaction_id) }}" class="m-0">
-                                                        @csrf
-                                                        <button type="submit" class="px-3 py-1 text-sm bg-emerald-700 text-white rounded-md hover:bg-emerald-800 transition-colors duration-200 shadow-sm">
-                                                            Accept
-                                                        </button>
-                                                    </form>
-                                                    <form method="POST" action="{{ route('trade.reject', $trade->transaction_id) }}" class="m-0">
-                                                        @csrf
-                                                        <button type="submit" class="px-3 py-1 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200 shadow-sm">
-                                                            Reject
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td colspan="7" class="px-3 py-4 text-center text-gray-500 italic text-sm">
-                                            No pending trades to review at the moment.
-                                        </td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
             <!-- Products Available for Trading Section -->
             <div class="bg-white overflow-hidden shadow-md sm:rounded-lg border-l-4 border-emerald-700 transition-all duration-300 hover:shadow-xl">
                 <div class="p-4 text-gray-900">
@@ -225,6 +97,18 @@
                         </svg>
                         Products Available for Trading
                     </h3>
+
+                    @if(!Auth::user()->is_approved)
+                        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-md shadow-sm mb-6 relative flex items-center" role="alert">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            <div>
+                                <p class="font-medium">Admin Approval Required</p>
+                                <p class="text-sm">Your account is pending approval by an administrator. You cannot initiate trades until your account has been approved.</p>
+                            </div>
+                        </div>
+                    @endif
 
                     @if(!Auth::user()->partner_id)
                         <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-md shadow-sm mb-6 relative flex items-center" role="alert">

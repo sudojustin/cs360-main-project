@@ -48,6 +48,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
     Route::delete('/admin/products/{product}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
     Route::delete('/admin/transactions/{transaction}', [AdminController::class, 'deleteTransaction'])->name('admin.transactions.delete');
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::patch('/admin/users/{user}/toggle-approval', [AdminController::class, 'toggleUserApproval'])->name('admin.users.toggle-approval');
 });
 
 Route::view('profile', 'profile')
