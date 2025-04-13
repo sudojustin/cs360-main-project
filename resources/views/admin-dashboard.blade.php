@@ -309,9 +309,7 @@
                                 <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Name</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Owner ID</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Value</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Quantity</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
                                 </tr>
                             </thead>
@@ -320,9 +318,7 @@
                                     <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
                                         <td class="px-3 py-2 border-b border-gray-200 font-medium text-sm">{{ $product->id }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->name }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->owner_id }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200 text-stone-700 font-medium text-sm">${{ number_format($product->value, 2) }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->quantity }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200">
                                             <form action="{{ route('admin.products.delete', $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
                                                 @csrf
