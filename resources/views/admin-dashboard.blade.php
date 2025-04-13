@@ -10,6 +10,55 @@
 
     <div class="py-12 bg-gradient-to-br from-stone-50 to-emerald-50">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-stone-700 rounded-2xl shadow-xl overflow-hidden">
+                <div class="relative">
+                    <!-- Decorative elements -->
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-stone-200 rounded-full opacity-20"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-emerald-200 rounded-full opacity-20"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-stone-100 rounded-full opacity-10"></div>
+                    
+                    <div class="relative px-6 py-8 sm:px-8 sm:py-10">
+                        <div class="flex flex-col md:flex-row items-center justify-between">
+                            <div class="mb-6 md:mb-0 md:mr-8">
+                                <h1 class="text-3xl font-bold text-white mb-2">Admin Control Panel</h1>
+                                <p class="text-emerald-100 text-lg max-w-2xl">Manage users, products, and transactions across the BarterDB platform.</p>
+                            </div>
+                            
+                            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
+                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4 text-center shadow-lg transform transition-all duration-300 hover:scale-105">
+                                    <div class="text-2xl font-bold text-white">{{ $users->count() }}</div>
+                                    <div class="text-emerald-100 text-sm font-medium">Total Users</div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4 text-center shadow-lg transform transition-all duration-300 hover:scale-105">
+                                    <div class="text-2xl font-bold text-white">{{ $products->count() }}</div>
+                                    <div class="text-emerald-100 text-sm font-medium">Total Products</div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4 text-center shadow-lg transform transition-all duration-300 hover:scale-105">
+                                    <div class="text-2xl font-bold text-white">{{ $transactions->count() }}</div>
+                                    <div class="text-emerald-100 text-sm font-medium">Total Transactions</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 flex flex-wrap gap-4">
+                            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 bg-white text-emerald-700 rounded-lg hover:bg-emerald-50 transition-colors duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                                </svg>
+                                Back to Dashboard
+                            </a>
+                            <a href="{{ route('profile') }}" class="inline-flex items-center px-4 py-2 bg-stone-700 text-white rounded-lg hover:bg-stone-800 transition-colors duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                </svg>
+                                View Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Welcome Card -->
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-emerald-700 transform transition-all hover:shadow-xl">
                 <div class="p-6 text-gray-900 flex items-center">
@@ -53,40 +102,40 @@
                         <table class="min-w-full table-auto border-collapse">
                             <thead>
                                 <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Name</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Email</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Admin</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Name</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Email</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Admin</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($users as $user)
                                     <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
-                                        <td class="px-4 py-3 border-b border-gray-200 font-medium">{{ $user->id }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">{{ $user->name }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">{{ $user->email }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">
+                                        <td class="px-3 py-2 border-b border-gray-200 font-medium text-sm">{{ $user->id }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $user->name }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $user->email }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200">
                                             @if($user->is_admin)
-                                                <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">Yes</span>
+                                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">Yes</span>
                                             @else
-                                                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">No</span>
+                                                <span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">No</span>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-3 border-b border-gray-200">
+                                        <td class="px-3 py-2 border-b border-gray-200">
                                             @if($user->id !== auth()->id())
                                                 <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-2 px-4 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                             <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                                         </svg>
                                                         Delete
                                                     </button>
                                                 </form>
                                             @else
-                                                <span class="text-gray-400 text-sm italic">Cannot delete yourself</span>
+                                                <span class="text-gray-400 text-xs italic">Cannot delete yourself</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -111,28 +160,28 @@
                         <table class="min-w-full table-auto border-collapse">
                             <thead>
                                 <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Name</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Owner ID</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Value</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Quantity</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Name</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Owner ID</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Value</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Quantity</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($products as $product)
                                     <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
-                                        <td class="px-4 py-3 border-b border-gray-200 font-medium">{{ $product->id }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">{{ $product->name }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">{{ $product->owner_id }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200 text-stone-700 font-medium">${{ number_format($product->value, 2) }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">{{ $product->quantity }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">
+                                        <td class="px-3 py-2 border-b border-gray-200 font-medium text-sm">{{ $product->id }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->name }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->owner_id }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-stone-700 font-medium text-sm">${{ number_format($product->value, 2) }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $product->quantity }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200">
                                             <form action="{{ route('admin.products.delete', $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-2 px-4 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                                     </svg>
                                                     Delete
@@ -143,6 +192,34 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Summary Card -->
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-emerald-700 transform transition-all hover:shadow-xl">
+                <div class="p-6 text-gray-900">
+                    <h3 class="font-semibold text-xl text-gray-900 flex items-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                            <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
+                        </svg>
+                        Transaction Fee Summary
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-emerald-50 p-4 rounded-lg shadow-sm">
+                            <div class="text-sm text-emerald-600 font-medium">Total Fees Collected</div>
+                            <div class="text-2xl font-bold text-emerald-800">${{ number_format($transactions->sum('transaction_fee_total'), 2) }}</div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg shadow-sm">
+                            <div class="text-sm text-blue-600 font-medium">Completed Transactions</div>
+                            <div class="text-2xl font-bold text-blue-800">{{ $transactions->where('status', 'Completed')->count() }}</div>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded-lg shadow-sm">
+                            <div class="text-sm text-stone-600 font-medium">Average Fee per Transaction</div>
+                            <div class="text-2xl font-bold text-stone-800">${{ number_format($transactions->avg('transaction_fee_total'), 2) }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -158,47 +235,92 @@
                     </h3>
 
                     <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
-                        <table class="min-w-full table-auto border-collapse">
+                        <table class="min-w-full table-auto border-collapse" id="transactions-table">
                             <thead>
                                 <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Initiator</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Counterparty</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Product</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Equivalent</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Fee</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Status</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Created</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider">Completed</th>
-                                    <th class="px-4 py-3 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg cursor-pointer hover:bg-emerald-100 transition-colors duration-150" data-sort="transaction_id">
+                                        ID
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1 sort-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider cursor-pointer hover:bg-emerald-100 transition-colors duration-150" data-sort="initiator">
+                                        Initiator
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1 sort-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider cursor-pointer hover:bg-emerald-100 transition-colors duration-150" data-sort="counterparty">
+                                        Counterparty
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1 sort-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider cursor-pointer hover:bg-emerald-100 transition-colors duration-150" data-sort="productp">
+                                        Product
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1 sort-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider cursor-pointer hover:bg-emerald-100 transition-colors duration-150" data-sort="producte">
+                                        Equivalent
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1 sort-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider cursor-pointer hover:bg-emerald-100 transition-colors duration-150" data-sort="transaction_fee_total">
+                                        Fee
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1 sort-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider cursor-pointer hover:bg-emerald-100 transition-colors duration-150" data-sort="status">
+                                        Status
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1 sort-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider cursor-pointer hover:bg-emerald-100 transition-colors duration-150" data-sort="created_at">
+                                        Created
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1 sort-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider cursor-pointer hover:bg-emerald-100 transition-colors duration-150" data-sort="completed_at">
+                                        Completed
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1 sort-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($transactions as $transaction)
                                     <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
-                                        <td class="px-4 py-3 border-b border-gray-200 font-medium">{{ $transaction->transaction_id }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">{{ $transaction->initiator->name ?? 'N/A' }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">{{ $transaction->counterparty->name ?? 'N/A' }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">{{ $transaction->productp->name ?? 'N/A' }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">{{ $transaction->producte->name ?? 'N/A' }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200 text-stone-700 font-medium">${{ number_format($transaction->transaction_fee_total, 2) }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">
-                                            <span class="px-3 py-1 rounded-full text-xs font-semibold 
-                                                @if($transaction->status == 'COMPLETE') bg-emerald-100 text-emerald-800 
+                                        <td class="px-3 py-2 border-b border-gray-200 font-medium text-sm">{{ $transaction->transaction_id }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $transaction->initiator->name ?? 'N/A' }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $transaction->counterparty->name ?? 'N/A' }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $transaction->productp->name ?? 'N/A' }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-sm">{{ $transaction->producte->name ?? 'N/A' }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-stone-700 font-medium text-sm">${{ number_format($transaction->transaction_fee_total, 2) }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200">
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold 
+                                                @if($transaction->status == 'Completed') bg-emerald-100 text-emerald-800 
                                                 @elseif($transaction->status == 'PENDING') bg-blue-100 text-blue-800
                                                 @elseif($transaction->status == 'INITIATED') bg-stone-100 text-stone-800
                                                 @else bg-gray-100 text-gray-800 @endif">
                                                 {{ $transaction->status }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3 border-b border-gray-200 text-xs text-gray-600">{{ $transaction->created_at }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200 text-xs text-gray-600">{{ $transaction->completed_at ?? 'Pending' }}</td>
-                                        <td class="px-4 py-3 border-b border-gray-200">
+                                        <td class="px-3 py-2 border-b border-gray-200 text-xs text-gray-600">{{ $transaction->created_at }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200 text-xs text-gray-600">{{ $transaction->completed_at ?? 'Pending' }}</td>
+                                        <td class="px-3 py-2 border-b border-gray-200">
                                             <form action="{{ route('admin.transactions.delete', $transaction->transaction_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this transaction?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-2 px-4 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <button type="submit" class="bg-white border border-red-500 text-red-600 hover:bg-red-50 font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                                     </svg>
                                                     Delete
@@ -214,4 +336,77 @@
             </div>
         </div>
     </div>
+
+    <!-- Sorting Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('transactions-table');
+            const headers = table.querySelectorAll('th[data-sort]');
+            let currentSort = {
+                column: null,
+                direction: 'asc'
+            };
+
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.getAttribute('data-sort');
+                    const direction = currentSort.column === column && currentSort.direction === 'asc' ? 'desc' : 'asc';
+                    
+                    // Update sort direction
+                    currentSort = { column, direction };
+                    
+                    // Update sort icons
+                    headers.forEach(h => {
+                        const icon = h.querySelector('.sort-icon');
+                        if (h === header) {
+                            icon.style.transform = direction === 'asc' ? 'rotate(0deg)' : 'rotate(180deg)';
+                        } else {
+                            icon.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                    
+                    // Sort the table
+                    sortTable(column, direction);
+                });
+            });
+
+            function sortTable(column, direction) {
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                
+                rows.sort((a, b) => {
+                    let aValue = a.querySelector(`td:nth-child(${getColumnIndex(column)})`).textContent.trim();
+                    let bValue = b.querySelector(`td:nth-child(${getColumnIndex(column)})`).textContent.trim();
+                    
+                    // Handle special cases
+                    if (column === 'transaction_fee_total') {
+                        aValue = parseFloat(aValue.replace('$', '').replace(',', ''));
+                        bValue = parseFloat(bValue.replace('$', '').replace(',', ''));
+                    } else if (column === 'created_at' || column === 'completed_at') {
+                        // For dates, convert to timestamps for comparison
+                        aValue = aValue === 'Pending' ? 0 : new Date(aValue).getTime();
+                        bValue = bValue === 'Pending' ? 0 : new Date(bValue).getTime();
+                    }
+                    
+                    // Compare values
+                    if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+                    if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+                
+                // Reorder rows in the DOM
+                rows.forEach(row => tbody.appendChild(row));
+            }
+
+            function getColumnIndex(column) {
+                const headers = table.querySelectorAll('th');
+                for (let i = 0; i < headers.length; i++) {
+                    if (headers[i].getAttribute('data-sort') === column) {
+                        return i + 1; // +1 because nth-child is 1-indexed
+                    }
+                }
+                return 1;
+            }
+        });
+    </script>
 </x-app-layout>
