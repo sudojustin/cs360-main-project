@@ -191,16 +191,31 @@
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }} ({{ $transaction->quantity_p }})</td>
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }} ({{ $transaction->quantity_e }})</td>
-                                        <td class="border-b border-gray-200 px-4 py-3 font-mono text-xs">{{ $transaction->hashkey }}</td>
+                                        <td class="border-b border-gray-200 px-4 py-3 font-mono text-xs">
+                                            @if(Auth::id() == $transaction->initiator_id)
+                                                {{ $transaction->hash_first }} <span class="text-gray-400">********</span>
+                                            @elseif(Auth::id() == $transaction->counterparty_id)
+                                                <span class="text-gray-400">********</span> {{ $transaction->hash_second }}
+                                            @else
+                                                <span class="text-gray-400 italic">Hidden</span>
+                                            @endif
+                                        </td>
                                         <td class="border-b border-gray-200 px-4 py-3 font-medium text-stone-700">${{ $transaction->transaction_fee_total }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3 text-xs">{{ $transaction->created_at }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3">
                                             <span class="px-3 py-1 rounded-full text-xs font-semibold 
-                                                @if($transaction->status == 'PENDING') bg-blue-100 text-blue-800
-                                                @elseif($transaction->status == 'INITIATED') bg-stone-100 text-stone-800
+                                                @if($transaction->status == 'Pending') bg-blue-100 text-blue-800
+                                                @elseif($transaction->status == 'Accepted') bg-amber-100 text-amber-800
+                                                @elseif($transaction->status == 'Countered') bg-purple-100 text-purple-800
                                                 @else bg-gray-100 text-gray-800 @endif">
                                                 {{ $transaction->status }}
                                             </span>
+                                            @if($transaction->initiator_confirmed && $transaction->initiator_id != Auth::id())
+                                                <span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs block mt-1">Initiator Confirmed</span>
+                                            @endif
+                                            @if($transaction->counterparty_confirmed && $transaction->counterparty_id != Auth::id())
+                                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs block mt-1">Counterparty Confirmed</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -258,7 +273,15 @@
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }} ({{ $transaction->quantity_p }})</td>
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }} ({{ $transaction->quantity_e }})</td>
-                                        <td class="border-b border-gray-200 px-4 py-3 font-mono text-xs">{{ $transaction->hashkey }}</td>
+                                        <td class="border-b border-gray-200 px-4 py-3 font-mono text-xs">
+                                            @if(Auth::id() == $transaction->initiator_id)
+                                                {{ $transaction->hash_first }} <span class="text-gray-400">********</span>
+                                            @elseif(Auth::id() == $transaction->counterparty_id)
+                                                <span class="text-gray-400">********</span> {{ $transaction->hash_second }}
+                                            @else
+                                                <span class="text-gray-400 italic">Hidden</span>
+                                            @endif
+                                        </td>
                                         <td class="border-b border-gray-200 px-4 py-3 font-medium text-stone-700">${{ $transaction->transaction_fee_total }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3 text-xs">{{ $transaction->created_at }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3 text-xs">{{ $transaction->completed_at }}</td>

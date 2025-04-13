@@ -33,6 +33,8 @@ class Transaction extends Model
         'completed_at',            // When the transaction was finalized (nullable)
         'status',                  // Pending, PartnerSelected, Verified, Completed, Rejected
         'last_action_by',          // The user who performed the last action
+        'initiator_confirmed',     // Whether the initiator has confirmed the trade with their hash
+        'counterparty_confirmed',  // Whether the counterparty has confirmed the trade with their hash
     ];
 
     public $timestamps = false; // Using custom timestamps

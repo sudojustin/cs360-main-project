@@ -38,7 +38,7 @@ class OfferController extends Controller
                       ->orWhere('partner_b_id', auth()->id())
                       ->orWhere('partner_y_id', auth()->id());
             })
-            ->whereIn('status', ['Pending', 'Countered'])
+            ->whereIn('status', ['Pending', 'Countered', 'Accepted'])
             ->get();
         
         // Transform the data to include counterparty user info
@@ -260,7 +260,9 @@ class OfferController extends Controller
             'hash_second' => $hashSecond, // Second half for Y
             'last_action_by' => $initiator_id,
             'fee_amount' => $totalFee,
-            'transaction_fee_total' => $totalFee // Duplicate for backward compatibility
+            'transaction_fee_total' => $totalFee, // Duplicate for backward compatibility
+            'initiator_confirmed' => false,
+            'counterparty_confirmed' => false
         ]);
         
         $transaction->save();
@@ -282,19 +284,64 @@ class OfferController extends Controller
             'current_user' => auth()->id()
         ]);
 
-        // Ensure the transaction is in 'pending' or 'countered' state (keep for backward compatibility)
-        if (!in_array($transaction->status, ['Pending', 'Countered'])) {
+        // Ensure the transaction is in a state that can be processed (Pending, Countered, or Accepted)
+        if (!in_array($transaction->status, ['Pending', 'Countered', 'Accepted'])) {
             return redirect()->route('offers')->with('error', 'Trade has already been processed.');
         }
 
         // Verify the current user is authorized to accept
         $currentUserId = auth()->id();
-        $isCounterInitiator = $transaction->status === 'Countered' && $transaction->initiator_id === $currentUserId;
+        $isInitiator = $transaction->initiator_id === $currentUserId;
+        $isCounterparty = $transaction->counterparty_id === $currentUserId;
         
-        if (!$isCounterInitiator && $transaction->counterparty_id != $currentUserId) {
+        if (!$isInitiator && !$isCounterparty) {
             return redirect()->route('offers')->with('error', 'You are not authorized to accept this trade.');
         }
         
+        // Validate hash part from the request
+        $request = request();
+        $request->validate([
+            'hash_part' => 'required|string|size:8',
+        ]);
+        
+        $hashPart = $request->hash_part;
+        
+        // If initiator, verify first half of hash
+        if ($isInitiator && $hashPart !== $transaction->hash_first) {
+            return redirect()->route('offers')->with('error', 'Invalid hash key part. Please check your hash and try again.');
+        }
+        
+        // If counterparty, verify second half of hash
+        if ($isCounterparty && $hashPart !== $transaction->hash_second) {
+            return redirect()->route('offers')->with('error', 'Invalid hash key part. Please check your hash and try again.');
+        }
+        
+        // Mark the transaction as "Accepted" by the current user
+        if ($isInitiator) {
+            $transaction->initiator_confirmed = true;
+        } else {
+            $transaction->counterparty_confirmed = true;
+        }
+        
+        $transaction->last_action_by = $currentUserId;
+        
+        // If only one party has confirmed, set status to "Accepted"
+        if ($transaction->initiator_confirmed != $transaction->counterparty_confirmed) {
+            $transaction->status = 'Accepted';
+        }
+        
+        $transaction->save();
+        
+        // If both initiator and counterparty have confirmed, complete the transaction
+        if ($transaction->initiator_confirmed && $transaction->counterparty_confirmed) {
+            return $this->completeTransaction($transaction);
+        }
+        
+        return redirect()->route('offers')->with('success', 'You have accepted the trade. Waiting for the other party to confirm.');
+    }
+
+    protected function completeTransaction(Transaction $transaction)
+    {
         // Load the products to verify values
         $productP = Product::find($transaction->productp_id);
         $productE = Product::find($transaction->producte_id);
@@ -396,7 +443,6 @@ class OfferController extends Controller
             // Update transaction status
             $transaction->status = 'Completed';
             $transaction->completed_at = now();
-            $transaction->last_action_by = $currentUserId;
             $transaction->save();
             
             \DB::commit();
@@ -404,9 +450,9 @@ class OfferController extends Controller
             // Summarize the trade for the success message
             $summary = "Four-party trade completed successfully! ";
             
-            if ($currentUserId == $transaction->initiator_id) {
+            if (auth()->id() == $transaction->initiator_id) {
                 $summary .= "You received {$quantityPAfterCost} {$productP->name}.";
-            } else if ($currentUserId == $transaction->counterparty_id) {
+            } else if (auth()->id() == $transaction->counterparty_id) {
                 if (!$transaction->partner_y_id) {
                     $summary .= "You gave {$transaction->quantity_p} {$productP->name} and received {$quantityEAfterCost} {$productE->name}.";
                 } else {
@@ -418,7 +464,7 @@ class OfferController extends Controller
             
         } catch (\Exception $e) {
             \DB::rollBack();
-            \Log::error('Trade acceptance failed', [
+            \Log::error('Trade completion failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);

@@ -58,6 +58,120 @@
                 </div>
             </div>
             
+            <!-- Pending Trades Section -->
+            <div class="bg-white overflow-hidden shadow-md sm:rounded-lg border-l-4 border-amber-500 transition-all duration-300 hover:shadow-xl mb-6">
+                <div class="p-4 text-gray-900">
+                    <h3 class="font-semibold text-lg text-gray-900 flex items-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 10.414V10a1 1 0 10-2 0v3a1 1 0 00.293.707l2 2a1 1 0 001.414-1.414L11 12.414z" clip-rule="evenodd" />
+                        </svg>
+                        Pending Trades
+                    </h3>
+
+                    @if(isset($pendingTrades) && $pendingTrades->count() > 0)
+                        <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
+                            <table class="min-w-full table-auto border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-amber-50 text-amber-800 uppercase text-xs">
+                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
+                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Your Role</th>
+                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Initiator (A)</th>
+                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Counterparty (X)</th>
+                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Product (X→A)</th>
+                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Product (B→Y)</th>
+                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Hash Key</th>
+                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Status</th>
+                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($pendingTrades as $trade)
+                                        <tr class="hover:bg-amber-50 transition-colors duration-150 ease-in-out">
+                                            <td class="px-3 py-2 border-b border-gray-200 font-medium">{{ $trade->transaction_id }}</td>
+                                            <td class="px-3 py-2 border-b border-gray-200">
+                                                @if(Auth::id() == $trade->initiator_id)
+                                                    <span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-medium">Initiator (A)</span>
+                                                @elseif(Auth::id() == $trade->counterparty_id)
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Counterparty (X)</span>
+                                                @elseif(Auth::id() == $trade->partner_b_id)
+                                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">Partner (B)</span>
+                                                @elseif(Auth::id() == $trade->partner_y_id)
+                                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">Partner (Y)</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-2 border-b border-gray-200">{{ $trade->initiator ? $trade->initiator->name : 'N/A' }}</td>
+                                            <td class="px-3 py-2 border-b border-gray-200">{{ $trade->counterparty ? $trade->counterparty->name : 'N/A' }}</td>
+                                            <td class="px-3 py-2 border-b border-gray-200">{{ $trade->productp ? $trade->productp->name : 'N/A' }} ({{ $trade->quantity_p }})</td>
+                                            <td class="px-3 py-2 border-b border-gray-200">{{ $trade->producte ? $trade->producte->name : 'N/A' }} ({{ $trade->quantity_e }})</td>
+                                            <td class="px-3 py-2 border-b border-gray-200 font-mono text-xs">
+                                                @if(Auth::id() == $trade->initiator_id)
+                                                    {{ $trade->hash_first }} <span class="text-gray-400">********</span>
+                                                @elseif(Auth::id() == $trade->counterparty_id)
+                                                    <span class="text-gray-400">********</span> {{ $trade->hash_second }}
+                                                @else
+                                                    <span class="text-gray-400 italic">Hidden</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-2 border-b border-gray-200">
+                                                <div class="flex flex-col space-y-1">
+                                                    <span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">{{ $trade->status }}</span>
+                                                    @if($trade->initiator_confirmed)
+                                                        <span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-medium">A Confirmed</span>
+                                                    @endif
+                                                    @if($trade->counterparty_confirmed)
+                                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">X Confirmed</span>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td class="px-3 py-2 border-b border-gray-200">
+                                                @if((Auth::id() == $trade->initiator_id && !$trade->initiator_confirmed) || 
+                                                    (Auth::id() == $trade->counterparty_id && !$trade->counterparty_confirmed))
+                                                    <form action="{{ route('trade.accept', $trade) }}" method="POST" class="flex flex-col space-y-2">
+                                                        @csrf
+                                                        <div>
+                                                            <input type="text" name="hash_part" placeholder="Enter your hash part" 
+                                                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md"
+                                                                maxlength="8" minlength="8" required>
+                                                        </div>
+                                                        <div class="flex space-x-2">
+                                                            <button type="submit" 
+                                                                class="px-3 py-1 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 shadow-sm flex items-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                                </svg>
+                                                                Confirm
+                                                            </button>
+                                                            <form action="{{ route('trade.reject', $trade) }}" method="POST" class="inline">
+                                                                @csrf
+                                                                <button type="submit" 
+                                                                    class="px-3 py-1 text-xs bg-red-600 text-white rounded-md hover:bg-red-700 shadow-sm flex items-center">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                                    </svg>
+                                                                    Reject
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </form>
+                                                @elseif(Auth::id() == $trade->initiator_id || Auth::id() == $trade->counterparty_id)
+                                                    <span class="text-xs text-amber-600">Waiting for other party</span>
+                                                @else
+                                                    <span class="text-xs text-gray-500 italic">No action needed</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="bg-gray-50 rounded-lg p-6 text-center">
+                            <p class="text-gray-500 italic">You don't have any pending trades at the moment.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            
             <!-- Messages Section -->
             @if(session('success'))
                 <div class="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 px-4 py-3 rounded-md shadow-sm mb-6 relative flex items-center" role="alert">

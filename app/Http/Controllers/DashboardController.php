@@ -33,8 +33,8 @@ class DashboardController extends Controller
             ->where(function($query) {
                 $query->where('initiator_id', Auth::id())
                     ->orWhere('counterparty_id', Auth::id())
-                    ->orWhere('partner_initiator_id', Auth::id())
-                    ->orWhere('partner_counterparty_id', Auth::id());
+                    ->orWhere('partner_b_id', Auth::id())
+                    ->orWhere('partner_y_id', Auth::id());
             })
             ->get();
 
