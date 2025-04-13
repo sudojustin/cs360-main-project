@@ -24,6 +24,7 @@ class User extends Authenticatable
         'is_admin',
         'partner_id',
         'is_approved',
+        'is_suspended',
     ];
 
     /**
@@ -48,6 +49,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_admin' => 'boolean',
             'is_approved' => 'boolean',
+            'is_suspended' => 'boolean',
         ];
     }
 
@@ -100,5 +102,10 @@ class User extends Authenticatable
     public function isApproved(): bool
     {
         return $this->is_approved ?? false;
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->is_suspended ?? false;
     }
 }

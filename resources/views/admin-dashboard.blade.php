@@ -236,6 +236,7 @@
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Email</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Admin</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Status</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Suspended</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
                                 </tr>
                             </thead>
@@ -258,6 +259,11 @@
                                             </span>
                                         </td>
                                         <td class="px-3 py-2 border-b border-gray-200">
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $user->is_suspended ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
+                                                {{ $user->is_suspended ? 'Suspended' : 'Active' }}
+                                            </span>
+                                        </td>
+                                        <td class="px-3 py-2 border-b border-gray-200">
                                             <div class="flex space-x-2">
                                                 @if(!$user->is_admin && !$user->is_approved)
                                                     <form action="{{ route('admin.users.toggle-approval', $user) }}" method="POST" class="inline">
@@ -272,6 +278,16 @@
                                                     </form>
                                                 @endif
                                                 @if($user->id !== auth()->id())
+                                                    <form action="{{ route('admin.users.toggle-suspension', $user) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" class="bg-white border {{ $user->is_suspended ? 'border-blue-500 text-blue-600 hover:bg-blue-50' : 'border-yellow-500 text-yellow-600 hover:bg-yellow-50' }} font-medium py-1 px-2 rounded-md flex items-center shadow-sm transition-all duration-200 hover:shadow text-xs">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            {{ $user->is_suspended ? 'Unsuspend' : 'Suspend' }}
+                                                        </button>
+                                                    </form>
                                                     <form action="{{ route('admin.users.delete', $user) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
                                                         @csrf
                                                         @method('DELETE')

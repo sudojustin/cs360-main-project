@@ -110,6 +110,18 @@
                         </div>
                     @endif
 
+                    @if(Auth::user()->is_suspended)
+                        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 px-4 py-3 rounded-md shadow-sm mb-6 relative flex items-center" role="alert">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
+                            </svg>
+                            <div>
+                                <p class="font-medium">Account Suspended</p>
+                                <p class="text-sm">Your account has been suspended by an administrator. You cannot initiate trades until your account has been unsuspended.</p>
+                            </div>
+                        </div>
+                    @endif
+
                     @if(!Auth::user()->partner_id)
                         <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-md shadow-sm mb-6 relative flex items-center" role="alert">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
@@ -153,7 +165,7 @@
                                         <td class="px-3 py-2 border-b border-gray-200 text-stone-700 font-medium">${{ number_format($item->product->value, 2) }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200">{{ $item->quantity }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200">
-                                            @if(Auth::user()->partner_id)
+                                            @if(Auth::user()->partner_id && Auth::user()->is_approved && !Auth::user()->is_suspended)
                                                 <button 
                                                     type="button" 
                                                     class="px-3 py-1 text-sm bg-emerald-700 text-white rounded-md hover:bg-emerald-800 flex items-center shadow-sm transition-all duration-200 hover:shadow open-trade-modal"
@@ -173,7 +185,7 @@
                                                 <button 
                                                     type="button" 
                                                     class="px-3 py-1 text-sm bg-gray-400 text-white rounded-md flex items-center shadow-sm cursor-not-allowed"
-                                                    title="You need to set a partner in your profile first"
+                                                    title="{{ !Auth::user()->is_approved ? 'Your account requires approval' : (!Auth::user()->partner_id ? 'You need to set a partner in your profile first' : 'Your account is suspended') }}"
                                                     disabled
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">

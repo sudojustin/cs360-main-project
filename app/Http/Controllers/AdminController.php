@@ -60,6 +60,20 @@ class AdminController extends Controller
             : "Approval for {$user->name} has been revoked.");
     }
 
+    public function toggleUserSuspension(User $user)
+    {
+        // Prevent suspending self
+        if (auth()->id() === $user->id) {
+            return back()->with('error', 'You cannot suspend your own account.');
+        }
+
+        $user->update(['is_suspended' => !$user->is_suspended]);
+        
+        return back()->with('success', $user->is_suspended 
+            ? "User {$user->name} has been suspended." 
+            : "User {$user->name} has been unsuspended.");
+    }
+
     public function dashboard()
     {
         $users = User::all();
