@@ -316,6 +316,20 @@ class OfferController extends Controller
             return redirect()->route('offers')->with('error', 'Invalid hash key part. Please check your hash and try again.');
         }
         
+        // If accepting a counteroffer, update the actual quantities to use the countered quantities
+        if ($transaction->status === 'Countered') {
+            // Only the party that didn't make the counteroffer can accept it
+            if ($transaction->counteroffer_by == $currentUserId) {
+                return redirect()->route('offers')->with('error', 'You cannot accept your own counteroffer.');
+            }
+            
+            // Update the actual quantities to the counteroffered quantities
+            if ($transaction->counter_quantity_p && $transaction->counter_quantity_e) {
+                $transaction->quantity_p = $transaction->counter_quantity_p;
+                $transaction->quantity_e = $transaction->counter_quantity_e;
+            }
+        }
+        
         // Mark the transaction as "Accepted" by the current user
         if ($isInitiator) {
             $transaction->initiator_confirmed = true;
@@ -590,5 +604,57 @@ class OfferController extends Controller
             \DB::rollBack();
             return redirect()->route('offers')->with('error', 'An error occurred: ' . $e->getMessage());
         }
+    }
+
+    // Method to handle counteroffers
+    public function counterOffer(Request $request, Transaction $transaction)
+    {
+        // Validate the request data
+        $request->validate([
+            'counter_quantity_p' => 'required|integer|min:1',
+            'counter_quantity_e' => 'required|integer|min:1',
+        ]);
+
+        // Ensure the current user is involved in the transaction
+        $currentUserId = auth()->id();
+        if ($transaction->initiator_id != $currentUserId && $transaction->counterparty_id != $currentUserId) {
+            return redirect()->route('offers')->with('error', 'You are not authorized to make a counteroffer for this trade.');
+        }
+
+        // Ensure the transaction is in a state that can be countered
+        if (!in_array($transaction->status, ['Pending', 'Countered'])) {
+            return redirect()->route('offers')->with('error', 'This trade cannot be countered in its current state.');
+        }
+
+        // Check if user has enough quantity to offer the counter
+        if ($currentUserId == $transaction->initiator_id) {
+            // Initiator making counteroffer, check partner_b has enough of product E
+            $partnerBInventory = UserProduct::where('user_id', $transaction->partner_b_id)
+                ->where('product_id', $transaction->producte_id)
+                ->first();
+                
+            if (!$partnerBInventory || $partnerBInventory->quantity < $request->counter_quantity_e) {
+                return redirect()->route('offers')->with('error', 'Your partner does not have enough quantity of the offered product.');
+            }
+        } else {
+            // Counterparty making counteroffer, check they have enough of product P
+            $counterpartyInventory = UserProduct::where('user_id', $transaction->counterparty_id)
+                ->where('product_id', $transaction->productp_id)
+                ->first();
+                
+            if (!$counterpartyInventory || $counterpartyInventory->quantity < $request->counter_quantity_p) {
+                return redirect()->route('offers')->with('error', 'You do not have enough quantity of the requested product.');
+            }
+        }
+
+        // Update the transaction with the counteroffer
+        $transaction->counter_quantity_p = $request->counter_quantity_p;
+        $transaction->counter_quantity_e = $request->counter_quantity_e;
+        $transaction->status = 'Countered';
+        $transaction->last_action_by = $currentUserId;
+        $transaction->counteroffer_by = $currentUserId;
+        $transaction->save();
+
+        return redirect()->route('offers')->with('success', 'Counteroffer submitted successfully.');
     }
 }

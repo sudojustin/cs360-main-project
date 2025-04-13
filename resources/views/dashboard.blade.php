@@ -189,8 +189,28 @@
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->counterparty ? $transaction->counterparty->name : 'Waiting' }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->partnerInitiator ? $transaction->partnerInitiator->name : 'N/A' }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }} ({{ $transaction->quantity_p }})</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }} ({{ $transaction->quantity_e }})</td>
+                                        <td class="border-b border-gray-200 px-4 py-3">
+                                            {{ $transaction->productp ? $transaction->productp->name : 'N/A' }} 
+                                            @if($transaction->status == 'Countered' && $transaction->counter_quantity_p)
+                                                <div class="mt-1 flex items-center">
+                                                    <span class="line-through text-gray-500 text-xs">({{ $transaction->quantity_p }})</span>
+                                                    <span class="ml-1 text-purple-700 text-xs font-medium">({{ $transaction->counter_quantity_p }})</span>
+                                                </div>
+                                            @else
+                                                ({{ $transaction->quantity_p }})
+                                            @endif
+                                        </td>
+                                        <td class="border-b border-gray-200 px-4 py-3">
+                                            {{ $transaction->producte ? $transaction->producte->name : 'N/A' }} 
+                                            @if($transaction->status == 'Countered' && $transaction->counter_quantity_e)
+                                                <div class="mt-1 flex items-center">
+                                                    <span class="line-through text-gray-500 text-xs">({{ $transaction->quantity_e }})</span>
+                                                    <span class="ml-1 text-purple-700 text-xs font-medium">({{ $transaction->counter_quantity_e }})</span>
+                                                </div>
+                                            @else
+                                                ({{ $transaction->quantity_e }})
+                                            @endif
+                                        </td>
                                         <td class="border-b border-gray-200 px-4 py-3 font-mono text-xs">
                                             @if(Auth::id() == $transaction->initiator_id)
                                                 {{ $transaction->hash_first }} <span class="text-gray-400">********</span>
@@ -215,6 +235,13 @@
                                             @endif
                                             @if($transaction->counterparty_confirmed && $transaction->counterparty_id != Auth::id())
                                                 <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs block mt-1">Counterparty Confirmed</span>
+                                            @endif
+                                            @if($transaction->status == 'Countered' && $transaction->counteroffer_by)
+                                                @php
+                                                    $counterofferBy = App\Models\User::find($transaction->counteroffer_by);
+                                                    $counterofferName = $counterofferBy ? $counterofferBy->name : 'Unknown';
+                                                @endphp
+                                                <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs block mt-1">Countered by {{ $counterofferName }}</span>
                                             @endif
                                         </td>
                                     </tr>

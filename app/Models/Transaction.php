@@ -21,8 +21,10 @@ class Transaction extends Model
         'partner_y_id',            // Y: Partner of X who receives product E
         'productp_id',             // The product P being exchanged from X to A
         'quantity_p',              // Quantity of product P being transferred
+        'counter_quantity_p',      // Counteroffered quantity of product P
         'producte_id',             // The product E being exchanged from B to Y
         'quantity_e',              // Quantity of product E being transferred
+        'counter_quantity_e',      // Counteroffered quantity of product E
         'hashkey',                 // Secure 16-digit transaction key
         'hash_key',                // Complete 16-digit secure hash key
         'hash_first',              // First half of hash (given to A)
@@ -31,8 +33,9 @@ class Transaction extends Model
         'fee_amount',              // Total cost of the transaction
         'created_at',              // When the transaction was initiated
         'completed_at',            // When the transaction was finalized (nullable)
-        'status',                  // Pending, PartnerSelected, Verified, Completed, Rejected
+        'status',                  // Pending, Countered, Accepted, Completed, Rejected
         'last_action_by',          // The user who performed the last action
+        'counteroffer_by',         // The user who made the counteroffer
         'initiator_confirmed',     // Whether the initiator has confirmed the trade with their hash
         'counterparty_confirmed',  // Whether the counterparty has confirmed the trade with their hash
     ];

@@ -38,6 +38,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Routes for accepting, rejecting, and making counteroffers
     Route::post('/trade/accept/{transaction}', [OfferController::class, 'acceptTrade'])->name('trade.accept');
     Route::post('/trade/reject/{transaction}', [OfferController::class, 'rejectTrade'])->name('trade.reject');
+    Route::post('/trade/counteroffer/{transaction}', [OfferController::class, 'counterOffer'])->name('trade.counteroffer');
     
     // Route for finalizing transaction with complete hash
     Route::post('/trade/finalize/{transaction}', [OfferController::class, 'finalizeTransaction'])->name('trade.finalize');

@@ -101,8 +101,34 @@
                                             </td>
                                             <td class="px-3 py-2 border-b border-gray-200">{{ $trade->initiator ? $trade->initiator->name : 'N/A' }}</td>
                                             <td class="px-3 py-2 border-b border-gray-200">{{ $trade->counterparty ? $trade->counterparty->name : 'N/A' }}</td>
-                                            <td class="px-3 py-2 border-b border-gray-200">{{ $trade->productp ? $trade->productp->name : 'N/A' }} ({{ $trade->quantity_p }})</td>
-                                            <td class="px-3 py-2 border-b border-gray-200">{{ $trade->producte ? $trade->producte->name : 'N/A' }} ({{ $trade->quantity_e }})</td>
+                                            <td class="px-3 py-2 border-b border-gray-200">
+                                                {{ $trade->productp ? $trade->productp->name : 'N/A' }} 
+                                                @if($trade->status == 'Countered' && $trade->counter_quantity_p)
+                                                    <div class="mt-1 flex items-center">
+                                                        <span class="line-through text-gray-500 text-xs">({{ $trade->quantity_p }})</span>
+                                                        <span class="ml-1 text-purple-700 text-xs font-medium">({{ $trade->counter_quantity_p }})</span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12z" />
+                                                        </svg>
+                                                    </div>
+                                                @else
+                                                    ({{ $trade->quantity_p }})
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-2 border-b border-gray-200">
+                                                {{ $trade->producte ? $trade->producte->name : 'N/A' }} 
+                                                @if($trade->status == 'Countered' && $trade->counter_quantity_e)
+                                                    <div class="mt-1 flex items-center">
+                                                        <span class="line-through text-gray-500 text-xs">({{ $trade->quantity_e }})</span>
+                                                        <span class="ml-1 text-purple-700 text-xs font-medium">({{ $trade->counter_quantity_e }})</span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12z" />
+                                                        </svg>
+                                                    </div>
+                                                @else
+                                                    ({{ $trade->quantity_e }})
+                                                @endif
+                                            </td>
                                             <td class="px-3 py-2 border-b border-gray-200 font-mono text-xs">
                                                 @if(Auth::id() == $trade->initiator_id)
                                                     {{ $trade->hash_first }} <span class="text-gray-400">********</span>
@@ -151,6 +177,16 @@
                                                                     Reject
                                                                 </button>
                                                             </form>
+                                                            
+                                                            <!-- Counteroffer Button -->
+                                                            <button 
+                                                                class="px-3 py-1 text-xs bg-purple-600 text-white rounded-md hover:bg-purple-700 shadow-sm flex items-center"
+                                                                onclick="openCounterOfferModal('{{ $trade->transaction_id }}', '{{ $trade->productp ? $trade->productp->name : 'N/A' }}', {{ $trade->quantity_p }}, '{{ $trade->producte ? $trade->producte->name : 'N/A' }}', {{ $trade->quantity_e }})">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                                                                </svg>
+                                                                Counter
+                                                            </button>
                                                         </div>
                                                     </form>
                                                 @elseif(Auth::id() == $trade->initiator_id || Auth::id() == $trade->counterparty_id)
@@ -169,6 +205,72 @@
                             <p class="text-gray-500 italic">You don't have any pending trades at the moment.</p>
                         </div>
                     @endif
+                </div>
+            </div>
+            
+            <!-- Counteroffer Modal -->
+            <div id="counterOfferModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-lg text-gray-900">Make Counteroffer</h3>
+                        <button onclick="closeCounterOfferModal()" class="text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <form id="counterOfferForm" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <div class="bg-amber-50 p-3 rounded-lg mb-4">
+                                <p class="text-sm text-amber-800">You are adjusting the quantities for this trade. The products cannot be changed.</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Product P:</label>
+                                <div class="flex flex-col">
+                                    <span id="productPName" class="font-semibold text-gray-900"></span>
+                                    <div class="flex items-center mt-1">
+                                        <span class="text-sm text-gray-600">Current quantity: </span>
+                                        <span id="currentQuantityP" class="ml-1 font-medium"></span>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <label for="counter_quantity_p" class="block text-gray-700 text-sm">New quantity:</label>
+                                    <input type="number" name="counter_quantity_p" id="counter_quantity_p" min="1" value="1" 
+                                           class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Product E:</label>
+                                <div class="flex flex-col">
+                                    <span id="productEName" class="font-semibold text-gray-900"></span>
+                                    <div class="flex items-center mt-1">
+                                        <span class="text-sm text-gray-600">Current quantity: </span>
+                                        <span id="currentQuantityE" class="ml-1 font-medium"></span>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <label for="counter_quantity_e" class="block text-gray-700 text-sm">New quantity:</label>
+                                    <input type="number" name="counter_quantity_e" id="counter_quantity_e" min="1" value="1" 
+                                           class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" onclick="closeCounterOfferModal()" 
+                                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+                                Submit Counteroffer
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
             
@@ -689,6 +791,40 @@
                     noResultsRow.remove();
                 }
             });
+        });
+    </script>
+
+    <!-- Counteroffer modal functions -->
+    <script>
+        function openCounterOfferModal(transactionId, productPName, quantityP, productEName, quantityE) {
+            // Set form action
+            document.getElementById('counterOfferForm').action = `{{ route('trade.counteroffer', '') }}/${transactionId}`;
+            
+            // Set current values
+            document.getElementById('productPName').textContent = productPName;
+            document.getElementById('currentQuantityP').textContent = quantityP;
+            document.getElementById('counter_quantity_p').value = quantityP;
+            
+            document.getElementById('productEName').textContent = productEName;
+            document.getElementById('currentQuantityE').textContent = quantityE;
+            document.getElementById('counter_quantity_e').value = quantityE;
+            
+            // Show modal
+            document.getElementById('counterOfferModal').classList.remove('hidden');
+        }
+        
+        function closeCounterOfferModal() {
+            document.getElementById('counterOfferModal').classList.add('hidden');
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('counterOfferModal');
+            const modalContent = modal.querySelector('.bg-white');
+            
+            if (event.target === modal) {
+                closeCounterOfferModal();
+            }
         });
     </script>
 </x-app-layout>
