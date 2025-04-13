@@ -31,10 +31,12 @@ class OfferController extends Controller
             ->get();
         
         // Get pending transaction offers - both initiated by and sent to the current user
-        $pendingTrades = Transaction::with(['initiator', 'productp', 'producte'])
+        $pendingTrades = Transaction::with(['initiator', 'counterparty', 'partnerB', 'partnerY', 'productp', 'producte'])
             ->where(function($query) {
                 $query->where('counterparty_id', auth()->id())
-                      ->orWhere('initiator_id', auth()->id());
+                      ->orWhere('initiator_id', auth()->id())
+                      ->orWhere('partner_b_id', auth()->id())
+                      ->orWhere('partner_y_id', auth()->id());
             })
             ->whereIn('status', ['Pending', 'Countered'])
             ->get();

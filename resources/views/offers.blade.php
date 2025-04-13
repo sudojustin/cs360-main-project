@@ -95,7 +95,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-stone-600" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
                         </svg>
-                        Pending Trades from Others
+                        Your Pending Trades
                     </h3>
 
                     <div class="overflow-x-auto bg-white rounded-lg shadow-inner">
@@ -103,10 +103,10 @@
                             <thead>
                                 <tr class="bg-stone-50 text-stone-800 uppercase text-xs">
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">Initiator</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Product (A→X)</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Quantity</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Product (X→A)</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Quantity</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Your Product</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Your Quantity</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Other Product</th>
+                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Other Quantity</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Value</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
                                 </tr>
@@ -116,14 +116,64 @@
                                     @foreach($pendingTrades as $trade)
                                         @php
                                             $isInitiator = $trade->initiator->id === Auth::id();
-                                            $theirProduct = $isInitiator ? $trade->offeredProduct : $trade->requestedProduct;
-                                            $theirQuantity = $isInitiator ? $trade->quantity_offered : $trade->quantity_requested;
-                                            $yourProduct = $isInitiator ? $trade->requestedProduct : $trade->offeredProduct;
-                                            $yourQuantity = $isInitiator ? $trade->quantity_requested : $trade->quantity_offered;
-                                            $tradePartner = $trade->initiator->name;
+                                            $isCounterparty = $trade->counterparty_id === Auth::id();
+                                            $isPartnerB = $trade->partner_b_id === Auth::id();
+                                            $isPartnerY = $trade->partner_y_id === Auth::id();
+                                            
+                                            // Determine user's role in the trade
+                                            $userRole = '';
+                                            if ($isInitiator) {
+                                                $userRole = $trade->initiator->name;
+                                            } elseif ($isCounterparty) {
+                                                $userRole = 'X (Counterparty)';
+                                            } elseif ($isPartnerB) {
+                                                $userRole = 'B (Partner of A)';
+                                            } elseif ($isPartnerY) {
+                                                $userRole = 'Y (Partner of X)';
+                                            }
+                                            
+                                            // Determine products and quantities based on user's role
+                                            if ($isInitiator) {
+                                                $yourProduct = $trade->requestedProduct;
+                                                $yourQuantity = $trade->quantity_requested;
+                                                $theirProduct = $trade->offeredProduct;
+                                                $theirQuantity = $trade->quantity_offered;
+                                            } elseif ($isCounterparty) {
+                                                $yourProduct = $trade->offeredProduct;
+                                                $yourQuantity = $trade->quantity_offered;
+                                                $theirProduct = $trade->requestedProduct;
+                                                $theirQuantity = $trade->quantity_requested;
+                                            } elseif ($isPartnerB) {
+                                                $yourProduct = $trade->offeredProduct;
+                                                $yourQuantity = $trade->quantity_offered;
+                                                $theirProduct = $trade->requestedProduct;
+                                                $theirQuantity = $trade->quantity_requested;
+                                            } elseif ($isPartnerY) {
+                                                $yourProduct = $trade->requestedProduct;
+                                                $yourQuantity = $trade->quantity_requested;
+                                                $theirProduct = $trade->offeredProduct;
+                                                $theirQuantity = $trade->quantity_offered;
+                                            }
+                                            
+                                            // Get other parties involved
+                                            $otherParties = [];
+                                            if (!$isInitiator) {
+                                                $otherParties[] = "A: " . $trade->initiator->name;
+                                            }
+                                            if (!$isCounterparty) {
+                                                $otherParties[] = "X: " . ($trade->counterparty ? "Counterparty" : 'N/A');
+                                            }
+                                            if (!$isPartnerB && $trade->partner_b_id) {
+                                                $otherParties[] = "B: " . ($trade->partnerB ? "Partner B" : 'N/A');
+                                            }
+                                            if (!$isPartnerY && $trade->partner_y_id) {
+                                                $otherParties[] = "Y: " . ($trade->partnerY ? "Partner Y" : 'N/A');
+                                            }
                                         @endphp
                                         <tr class="hover:bg-stone-50 transition-colors duration-150 ease-in-out">
-                                            <td class="px-3 py-2 border-b border-gray-200 font-medium">{{ $tradePartner }}</td>
+                                            <td class="px-3 py-2 border-b border-gray-200 font-medium">
+                                                {{ $trade->initiator->name }}
+                                            </td>
                                             <td class="px-3 py-2 border-b border-gray-200">{{ $yourProduct->name }}</td>
                                             <td class="px-3 py-2 border-b border-gray-200">{{ $yourQuantity }}</td>
                                             <td class="px-3 py-2 border-b border-gray-200">{{ $theirProduct->name }}</td>
@@ -132,8 +182,7 @@
                                                 ${{ number_format($theirProduct->value * $theirQuantity, 2) }}
                                                 <div class="text-xs text-gray-500">
                                                     Status: {{ $trade->status }} | 
-                                                    Last action: {{ isset($trade->last_action_by) ? $trade->last_action_by : 'None' }} | 
-                                                    Current user: {{ Auth::id() }}
+                                                    Last action: {{ isset($trade->last_action_by) ? $trade->last_action_by : 'None' }}
                                                 </div>
                                             </td>
                                             <td class="px-3 py-2 border-b border-gray-200">
