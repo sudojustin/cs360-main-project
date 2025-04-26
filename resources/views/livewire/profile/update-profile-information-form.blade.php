@@ -10,7 +10,7 @@ new class extends Component
 {
     public string $name = '';
     public string $email = '';
-    public ?int $partner_id = null; // Add partner_id to store the selected partner's id
+    public string $partner_email = ''; // Changed from partner_id to partner_email
 
     /**
      * Mount the component.
@@ -26,8 +26,8 @@ new class extends Component
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
         
-        // Check if the partner exists before accessing partner_id
-        $this->partner_id = $user->partner ? $user->partner->id : null; // Use the partner's id if it exists, otherwise null
+        // Get partner's email if partner exists
+        $this->partner_email = $user->partner ? $user->partner->email : ''; 
     }
 
     /**
@@ -40,17 +40,36 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-            'partner_id' => ['nullable', 'exists:users,id', 'different:' . Auth::id()],
+            'partner_email' => ['nullable', 'string', 'email', 'max:255', 'different:email'],
         ]);
 
-        $user->fill($validated);
+        $user->fill([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
+        // Handle partner relationship by email
+        $partnerEmail = $validated['partner_email'];
+        $partnerId = null;
+        
+        if (!empty($partnerEmail)) {
+            // Find user by email
+            $partner = User::where('email', $partnerEmail)->first();
+            
+            if ($partner) {
+                $partnerId = $partner->id;
+            } else {
+                $this->addError('partner_email', 'User with this email not found.');
+                return;
+            }
+        }
+
         // Handle partner relationship updates
-        if ($this->partner_id !== $user->partner_id) {
+        if (($partnerId !== $user->partner_id) || ($partnerId === null && $user->partner_id !== null)) {
             // If there was a previous partner, remove the partnership
             if ($user->partner_id) {
                 $previousPartner = User::find($user->partner_id);
@@ -61,19 +80,22 @@ new class extends Component
             }
 
             // If there's a new partner, update both users
-            if ($this->partner_id) {
-                $newPartner = User::find($this->partner_id);
+            if ($partnerId) {
+                $newPartner = User::find($partnerId);
                 if ($newPartner) {
                     // First update the new partner's partner_id
                     $newPartner->partner_id = $user->id;
                     $newPartner->save();
                     
                     // Then update the current user's partner_id
-                    $user->partner_id = $this->partner_id;
+                    $user->partner_id = $partnerId;
                     $user->save();
                     
                     return; // Exit early since we've already saved both users
                 }
+            } else {
+                // If no partner is selected, set partner_id to null
+                $user->partner_id = null;
             }
         }
 
@@ -125,16 +147,11 @@ new class extends Component
             <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
-        <!-- Partner ID Field -->
-        <div>
-            <x-input-label for="partner_id" :value="__('Partner ID (Optional)')" />
-            <select wire:model="partner_id" id="partner_id" name="partner_id" class="mt-1 block w-full">
-                <option value="">Select a Partner</option>
-                @foreach(App\Models\User::where('id', '!=', auth()->id())->get() as $user)
-                    <option value="{{ $user->id }}" @selected($user->id == $partner_id)>{{ $user->name }}</option>
-                @endforeach
-            </select>
-            <x-input-error class="mt-2" :messages="$errors->get('partner_id')" />
+        <!-- Partner Email Field -->
+        <div class="mt-4">
+            <x-input-label for="partner_email" :value="__('Partner Email (Optional)')" />
+            <x-text-input wire:model="partner_email" id="partner_email" name="partner_email" type="email" class="mt-1 block w-full" placeholder="Enter your partner's email" />
+            <x-input-error class="mt-2" :messages="$errors->get('partner_email')" />
         </div>
 
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
