@@ -164,10 +164,6 @@
                             <thead>
                                 <tr class="bg-stone-50 text-stone-800 uppercase text-xs">
                                     <th class="px-4 py-3 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">Initiator (A)</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">Counterparty (X)</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">A's Partner (B)</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">X's Partner (Y)</th>
                                     <th class="px-4 py-3 text-left font-medium tracking-wider">Product (X→A)</th>
                                     <th class="px-4 py-3 text-left font-medium tracking-wider">Product (B→Y)</th>
                                     <th class="px-4 py-3 text-left font-medium tracking-wider">Hash Key</th>
@@ -185,10 +181,6 @@
                                 @forelse ($pendingTransactions as $transaction)
                                     <tr class="hover:bg-stone-50 transition-colors duration-150 ease-in-out">
                                         <td class="border-b border-gray-200 px-4 py-3 font-medium text-gray-700">{{ $transaction->transaction_id }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->initiator ? $transaction->initiator->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->counterparty ? $transaction->counterparty->name : 'Waiting' }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->partnerInitiator ? $transaction->partnerInitiator->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3">
                                             {{ $transaction->productp ? $transaction->productp->name : 'N/A' }} 
                                             @if($transaction->status == 'Countered' && $transaction->counter_quantity_p)
@@ -237,17 +229,13 @@
                                                 <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs block mt-1">Counterparty Confirmed</span>
                                             @endif
                                             @if($transaction->status == 'Countered' && $transaction->counteroffer_by)
-                                                @php
-                                                    $counterofferBy = App\Models\User::find($transaction->counteroffer_by);
-                                                    $counterofferName = $counterofferBy ? $counterofferBy->name : 'Unknown';
-                                                @endphp
-                                                <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs block mt-1">Countered by {{ $counterofferName }}</span>
+                                                <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs block mt-1">Countered</span>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="11" class="border-b border-gray-200 px-4 py-6 text-center text-gray-500 italic">
+                                        <td colspan="7" class="border-b border-gray-200 px-4 py-6 text-center text-gray-500 italic">
                                             You don't have any pending transactions.
                                         </td>
                                     </tr>
@@ -272,10 +260,6 @@
                             <thead>
                                 <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
                                     <th class="px-4 py-3 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">Initiator (A)</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">Counterparty (X)</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">A's Partner (B)</th>
-                                    <th class="px-4 py-3 text-left font-medium tracking-wider">X's Partner (Y)</th>
                                     <th class="px-4 py-3 text-left font-medium tracking-wider">Product (X→A)</th>
                                     <th class="px-4 py-3 text-left font-medium tracking-wider">Product (B→Y)</th>
                                     <th class="px-4 py-3 text-left font-medium tracking-wider">Hash Key</th>
@@ -294,10 +278,6 @@
                                 @forelse ($completedTransactions as $transaction)
                                     <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
                                         <td class="border-b border-gray-200 px-4 py-3 font-medium text-gray-700">{{ $transaction->transaction_id }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->initiator ? $transaction->initiator->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->counterparty ? $transaction->counterparty->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->partnerInitiator ? $transaction->partnerInitiator->name : 'N/A' }}</td>
-                                        <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->partnerCounterparty ? $transaction->partnerCounterparty->name : 'N/A' }}</td>
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->productp ? $transaction->productp->name : 'N/A' }} ({{ $transaction->quantity_p }})</td>
                                         <td class="border-b border-gray-200 px-4 py-3">{{ $transaction->producte ? $transaction->producte->name : 'N/A' }} ({{ $transaction->quantity_e }})</td>
                                         <td class="border-b border-gray-200 px-4 py-3 font-mono text-xs">
@@ -320,7 +300,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="12" class="border-b border-gray-200 px-4 py-6 text-center text-gray-500 italic">
+                                        <td colspan="8" class="border-b border-gray-200 px-4 py-6 text-center text-gray-500 italic">
                                             You don't have any completed transactions yet.
                                         </td>
                                     </tr>
