@@ -75,8 +75,6 @@
                                     <tr class="bg-amber-50 text-amber-800 uppercase text-xs">
                                         <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">ID</th>
                                         <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Your Role</th>
-                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Initiator (A)</th>
-                                        <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Counterparty (X)</th>
                                         <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Product (X→A)</th>
                                         <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Product (B→Y)</th>
                                         <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Hash Key</th>
@@ -99,8 +97,6 @@
                                                     <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">Partner (Y)</span>
                                                 @endif
                                             </td>
-                                            <td class="px-3 py-2 border-b border-gray-200">{{ $trade->initiator ? $trade->initiator->name : 'N/A' }}</td>
-                                            <td class="px-3 py-2 border-b border-gray-200">{{ $trade->counterparty ? $trade->counterparty->name : 'N/A' }}</td>
                                             <td class="px-3 py-2 border-b border-gray-200">
                                                 {{ $trade->productp ? $trade->productp->name : 'N/A' }} 
                                                 @if($trade->status == 'Countered' && $trade->counter_quantity_p)
