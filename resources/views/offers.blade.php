@@ -363,17 +363,23 @@
                             <thead>
                                 <tr class="bg-emerald-50 text-emerald-800 uppercase text-xs">
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tl-lg">Product</th>
-                                    <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Owner</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Value</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider">Available Quantity</th>
                                     <th class="px-3 py-2 border-b border-gray-200 text-left font-medium tracking-wider rounded-tr-lg">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($otherUserProducts as $item)
+                                @php
+                                    $filteredProducts = $otherUserProducts->filter(function($item) {
+                                        // Only show products from users who have partners
+                                        // Exclude products from the current user's partner
+                                        return $item->user->partner_id && $item->user->id != Auth::user()->partner_id;
+                                    });
+                                @endphp
+                                
+                                @forelse($filteredProducts as $item)
                                     <tr class="hover:bg-emerald-50 transition-colors duration-150 ease-in-out">
                                         <td class="px-3 py-2 border-b border-gray-200 font-medium">{{ $item->product->name }}</td>
-                                        <td class="px-3 py-2 border-b border-gray-200">{{ $item->user->name }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200 text-stone-700 font-medium">${{ number_format($item->product->value, 2) }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200">{{ $item->quantity }}</td>
                                         <td class="px-3 py-2 border-b border-gray-200">
@@ -408,15 +414,13 @@
                                             @endif
                                         </td>
                                     </tr>
-                                @endforeach
-                                
-                                @if($otherUserProducts->isEmpty())
+                                @empty
                                     <tr>
-                                        <td colspan="5" class="px-3 py-4 text-center text-gray-500 italic text-sm">
+                                        <td colspan="4" class="px-3 py-4 text-center text-gray-500 italic text-sm">
                                             No products are available for trading at the moment.
                                         </td>
                                     </tr>
-                                @endif
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -495,7 +499,7 @@
                 <!-- Counterparty Information (X and Y) -->
                 <div class="mb-5 bg-stone-50 rounded-lg p-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Counterparty (Role X):</label>
-                    <p id="ownerName" class="font-semibold text-emerald-800"></p>
+                    <p class="text-xs text-gray-500">The counterparty is the owner of the product you want to receive. Their identity remains anonymous during trading.</p>
                     
                     <div class="mt-3">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Counterparty's Partner (Role Y):</label>
@@ -609,7 +613,6 @@
                     
                     document.getElementById('productp_id').value = productId;
                     document.getElementById('counterparty_id').value = ownerId;
-                    document.getElementById('ownerName').textContent = ownerName;
                     document.getElementById('requestedProductName').textContent = productName;
                     document.getElementById('requestedProductQuantity').textContent = productQuantity;
                     document.getElementById('requestedProductValue').textContent = productValue;
@@ -730,7 +733,6 @@
         }
     }
 
-    /* Improve focus styles for better accessibility */
     input:focus, select:focus, button:focus {
         outline: none;
         box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
